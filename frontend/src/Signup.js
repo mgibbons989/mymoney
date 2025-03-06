@@ -1,0 +1,36 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+function Signup() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://127.0.0.1:5000/signup', { username, email, password });
+      alert('Signup successful!');
+      navigate('/login');
+    } catch (error) {
+      alert('Error signing up');
+    }
+  };
+
+  return (
+    <div>
+      <h2>Welcome! Please choose to sign up or log in.</h2>
+      <h2>Signup</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+  );
+}
+
+export default Signup;
