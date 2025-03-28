@@ -1,0 +1,49 @@
+from flask import Flask, render_template, request, redirect, url_for, session
+
+app = Flask(__name__)
+app.secret_key = "your_secret_key"
+
+
+employees = {
+    "john_doe": {"password": "password123", "payroll_report": "payroll_john.pdf"},
+    "jane_smith": {"password": "securepass", "payroll_report": "payroll_jane.pdf"},
+}
+
+@app.route("/")
+def home():
+    return render_template("login.html")
+
+@app.route("/login", methods=["POST"])
+def login():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    if username in employees and employees[username]["password"] == password:
+        session["employee"] = username
+        return redirect(url_for("payroll"))
+    
+    return "Invalid credentials. <a href='/'>Try again</a>"
+
+@app.route("/payroll")
+def payroll():
+    if "employee" not in session:
+        return redirect(url_for("home"))
+
+    username = session["employee"]
+    report_filename = employees[username]["payroll_report"]
+    return f"Welcome {username}, <a href='/download/{report_filename}'>Download Payroll Report</a>"
+
+@app.route("/logout")
+def logout():
+    session.pop("employee", None)
+    return redirect(url_for("home"))
+
+@app.route("/download/<filename>")
+def download(filename):
+    if "employee" not in session:
+        return redirect(url_for("home"))
+    
+    return f"Initiating download for {filename}..."  # In production, use `send_from_directory()`
+
+if __name__ == "__main__":
+    app.run(debug=True)
