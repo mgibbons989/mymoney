@@ -52,10 +52,10 @@ class Timesheet(db.Model): #USED TO BE ClockInClockOut
 class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
+
     start_time = db.Column(db.String(80), nullable=False)
     end_time = db.Column(db.String(80), nullable=False)
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
-    employee = db.relationship('Employee', backref=db.backref('shifts', lazy=True))
 
 # Create the database tables
 # with app.app_context():
