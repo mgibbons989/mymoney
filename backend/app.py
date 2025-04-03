@@ -67,7 +67,6 @@ class Positions(db.Model):
     privileges = db.Column(db.Boolean, default = False, nullable=False)
     hourly_wage = db.Column(db.Float, nullable=False)
 
-
 # Create the database tables
 # with app.app_context():
 #     db.create_all()
