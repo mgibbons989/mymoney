@@ -36,14 +36,15 @@ class Employee(db.Model): #USED TO BE Users
     password_hash = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(150), nullable=False)
     last_name = db.Column(db.String(150), nullable=False)
-    position = db.Column(db.Integer, db.ForeignKey('positions.id'), nullable=False)
 
-    position = db.relationship('Positions', backref='employees', lazy=True)
+    position_id = db.Column(db.Integer, db.ForeignKey('positions.id'), nullable=False)
+
+    position = db.relationship('Positions', backref='employee', lazy=True)
 
 class Timesheet(db.Model): #USED TO BE ClockInClockOut
     id = db.Column(db.Integer, primary_key=True)
 
-    employee_id = db.Column(db.Integer, db.ForeignKey('Employees.id'), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
 
     date = db.Column(db.DateTime, nullable=True)
     clock_in = db.Column(db.DateTime, nullable=True)
@@ -57,7 +58,7 @@ class Timesheet(db.Model): #USED TO BE ClockInClockOut
 class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
 
     date = db.Column(db.DateTime, nullable=True)
     start_time = db.Column(db.DateTime, nullable=False)
@@ -126,13 +127,16 @@ def login():
     
     return jsonify({'message': 'Invalid credentials. Please try again or signup'}), 401
 
+
+# *******************TO DO*************************
+
 @app.route('/logout')
 def logout():
     pass
 
 #based on the chosen pay period, get pay from those dates and display them
 #OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
-@app.route('/getPayroll', method = ['GET', 'POST']) 
+@app.route('/getPayroll', methods = ['GET', 'POST']) 
 def getPayroll():
     pass
 
@@ -149,11 +153,12 @@ def getEmployees():
     pass
 
 # display employee information
-@app.route('info/<int:employee_id>', methods = ['GET'])
+@app.route('/info/<int:employee_id>', methods = ['GET'])
 def displayEmployeeInfo(employee_id):
     pass
 
-# Protected Dashboard Route
+
+
 @app.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
@@ -161,12 +166,11 @@ def dashboard():
     user = Employee.query.get(current_user_id)
     return jsonify({'message': f'Welcome, {user.first_name}'}), 200
 
-# Clock-In Route
 @app.route('/clockin', methods=['POST'])
 @jwt_required()
 def clockin():
     current_user_id = get_jwt_identity()
-    clockin_record = Timesheet(user_id = current_user_id, 
+    clockin_record = Timesheet(employee_id = current_user_id, 
                                date = db.func.date(db.func.now()), 
                                clock_in = db.func.time(db.func.now()))
 
@@ -175,7 +179,6 @@ def clockin():
 
     return jsonify({'message': 'Clock-in successful'}), 200
 
-# Clock-Out Route
 @app.route('/clockout', methods=['POST'])
 @jwt_required()
 def clockout():
@@ -193,7 +196,6 @@ def clockout():
     return jsonify({'message': 'No active clock-in found'}), 404
 
 
-# Route for manager to assign a shift to an employee
 @app.route('/assign_shift', methods=['POST'])
 def assign_shift():
     data = request.get_json()
@@ -202,13 +204,11 @@ def assign_shift():
     start_time = data['start_time']
     end_time = data['end_time']
 
-    # Check if employee exists
     employee = Employee.query.get(employee_id)
 
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
-    # Create a new shift
     new_shift = Shifts(date = date, start_time=start_time, end_time=end_time, employee_id=employee.id)
     db.session.add(new_shift)
     db.session.commit()

@@ -9,7 +9,7 @@ const Payroll = ({ employeeID, positionName }) => {
             const wageData = await wageResult.json();
             if (!wageResult.ok) throw new Error(wageData.error || "Failed to get wage");
 
-            const hoursResult = await fetch(`http://127.0.0.1:5000/get_wage/${employeeID}`);
+            const hoursResult = await fetch(`http://127.0.0.1:5000/get_hours/${employeeID}`);
             const hoursData = await hoursResult.json();
             if (!hoursResult.ok) throw new Error(hoursData.error || "Failed to get hours");
 
