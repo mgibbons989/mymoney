@@ -28,34 +28,47 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 migrate = Migrate(app, db)
 
-class Employees(db.Model): #USED TO BE Users
+class Employee(db.Model): #USED TO BE Users
     id = db.Column(db.Integer, primary_key=True)
 
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    first_name = db.Column(db.String(255), nullable=False)
-    last_name = db.Column(db.String(255), nullable=False)
-    position = 'inserthereplease'
+    first_name = db.Column(db.String(150), nullable=False)
+    last_name = db.Column(db.String(150), nullable=False)
+
+    position_id = db.Column(db.Integer, db.ForeignKey('positions.id'), nullable=False)
+
+    position = db.relationship('Positions', backref='employee', lazy=True)
 
 class Timesheet(db.Model): #USED TO BE ClockInClockOut
     id = db.Column(db.Integer, primary_key=True)
 
-    employee_id = db.Column(db.Integer, db.ForeignKey('Employees.id'), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
 
     date = db.Column(db.DateTime, nullable=True)
     clock_in = db.Column(db.DateTime, nullable=True)
     clock_out = db.Column(db.DateTime, nullable=True)
     # in code: if clock in exists, display clock out button
     # if clock out exists, display clock in button and calculate the hours worked since clock in for the date
-    hours_Worked = db.Column(db.Integer, nullable=True)
+    hours_Worked = db.Column(db.Float, nullable=True)
+
 
 class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    start_time = db.Column(db.String(80), nullable=False)
-    end_time = db.Column(db.String(80), nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
-    employee = db.relationship('Employee', backref=db.backref('shifts', lazy=True))
+
+    date = db.Column(db.DateTime, nullable=True)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+
+class Positions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    positionName = db.Column(db.String(150), nullable=False)
+    privileges = db.Column(db.Boolean, default = False, nullable=False)
+    hourly_wage = db.Column(db.Float, nullable=False)
+
 
 # Create the database tables
 # with app.app_context():
@@ -65,95 +78,138 @@ class Shifts(db.Model):
 def home():
     return jsonify({'message': 'Welcome to the Clock-In/Clock-Out API!'}), 200
 
-# Signup Route
+# validate email and password
+def valid_email():
+    pass
+
+def valid_password():
+    pass
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    user = User(username=data['username'], email=data['email'], password=hashed_password)
+    email = data['email']
+    password = data['password']
+
+    if not valid_email(email):
+        return jsonify({"message": 'Invalid email address. Please try again.'}), 400
+    if not valid_password(password):
+        return jsonify({"message": 'Invalid password. Please try again.'}), 400
+    existing_user = Employee.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({"message": 'Email already registered. Please log in.'}), 409
+    
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    user = Employee(email=email, 
+                    password_hash=hashed_password, 
+                    first_name= data['fname'], 
+                    last_name = data['lname'], 
+                    position = data['position'])
+
     db.session.add(user)
     db.session.commit()
-    return jsonify({'message': 'User registered successfully'}), 201
+    return jsonify({'message': 'Employee registered successfully'}), 201
 
-# Login Route
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
-    user = User.query.filter_by(email=data['email']).first()
-    if user and bcrypt.check_password_hash(user.password, data['password']):
+    user = Employee.query.filter_by(email=data['email']).first()
+    
+    if user and bcrypt.check_password_hash(user.password_hash, data['password']):
         access_token = create_access_token(identity=user.id)
-        return jsonify({'access_token': access_token, 'username': user.username}), 200
-    return jsonify({'message': 'Invalid credentials'}), 401
+        return jsonify({'access_token': access_token, 'first_name': user.first_name}), 200
+    
+    return jsonify({'message': 'Invalid credentials. Please try again or signup'}), 401
 
-# Protected Dashboard Route
+
+# *******************TO DO*************************
+
+@app.route('/logout')
+def logout():
+    pass
+
+#based on the chosen pay period, get pay from those dates and display them
+#OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
+@app.route('/getPayroll', methods = ['GET', 'POST'])
+@jwt_required()
+def getPayroll():
+    pass
+
+# display the schedule for the next three weeks
+# if no shifts have been assigned, display either "no shift available" or blank if we're using a calendar format
+@app.route('/schedule')
+@jwt_required()
+def getSchedule():
+    pass
+
+# for those with priveleges, return a list of employees 
+# we'll turn them into links to lead to employee information and for assigning shifts
+@app.route('/employees')
+@jwt_required()
+def getEmployees():
+    pass
+
+# display employee information for manager
+@app.route('/info/<int:employee_id>', methods = ['GET'])
+@jwt_required()
+def displayEmployeeInfo(employee_id):
+    pass
+
+
+
 @app.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    return jsonify({'message': f'Welcome, {user.username}'}), 200
+    user = Employee.query.get(current_user_id)
+    return jsonify({'message': f'Welcome, {user.first_name}'}), 200
 
-# Clock-In Route
 @app.route('/clockin', methods=['POST'])
 @jwt_required()
 def clockin():
     current_user_id = get_jwt_identity()
-    clockin_record = ClockInOut(user_id=current_user_id, clock_in=db.func.now())
+    clockin_record = Timesheet(employee_id = current_user_id, 
+                               date = db.func.date(db.func.now()), 
+                               clock_in = db.func.time(db.func.now()))
+
     db.session.add(clockin_record)
     db.session.commit()
+
     return jsonify({'message': 'Clock-in successful'}), 200
 
-# Clock-Out Route
 @app.route('/clockout', methods=['POST'])
 @jwt_required()
 def clockout():
     current_user_id = get_jwt_identity()
-    clockin_record = ClockInOut.query.filter_by(user_id=current_user_id, clock_out=None).first()
+
+    # NEED TO ADD EDGE CASE OF CLOCK OUT BEING THE NEXT DAY AND IF THERE ARE MULTIPLE CLOCK IN AND OUTS A DAY(split shift)
+
+    clockin_record = Timesheet.query.filter_by(user_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
+    
     if clockin_record:
-        clockin_record.clock_out = db.func.now()
+        clockin_record.clock_out = db.func.time(db.func.now())
         db.session.commit()
         return jsonify({'message': 'Clock-out successful'}), 200
+    
     return jsonify({'message': 'No active clock-in found'}), 404
 
-# Route to create manager
-@app.route('/create_manager', methods=['POST'])
-def create_manager():
-    data = request.get_json()
-    new_manager = Manager(username=data['username'], password=data['password'])
-    db.session.add(new_manager)
-    db.session.commit()
-    return jsonify({"message": "Manager created successfully!"}), 201
 
-# Route to create employee
-@app.route('/create_employee', methods=['POST'])
-def create_employee():
-    data = request.get_json()
-    new_employee = Employee(username=data['username'], password=data['password'])
-    db.session.add(new_employee)
-    db.session.commit()
-    return jsonify({"message": "Employee created successfully!"}), 201
-
-# Route for manager to assign a shift to an employee
 @app.route('/assign_shift', methods=['POST'])
+@jwt_required()
 def assign_shift():
     data = request.get_json()
-    manager_id = data['manager_id']
     employee_id = data['employee_id']
+    date = data['date']
     start_time = data['start_time']
     end_time = data['end_time']
-    
-    # Check if manager exists
-    manager = Manager.query.get(manager_id)
-    if not manager:
-        return jsonify({"message": "Manager not found"}), 404
 
-    # Check if employee exists
     employee = Employee.query.get(employee_id)
+
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
-    # Create a new shift
-    new_shift = Shift(start_time=start_time, end_time=end_time, employee_id=employee.id)
+    new_shift = Shifts(date = date, start_time=start_time, end_time=end_time, employee_id=employee.id)
     db.session.add(new_shift)
     db.session.commit()
     return jsonify({"message": "Shift assigned successfully!"}), 201
