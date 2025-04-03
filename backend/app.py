@@ -136,24 +136,28 @@ def logout():
 
 #based on the chosen pay period, get pay from those dates and display them
 #OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
-@app.route('/getPayroll', methods = ['GET', 'POST']) 
+@app.route('/getPayroll', methods = ['GET', 'POST'])
+@jwt_required()
 def getPayroll():
     pass
 
 # display the schedule for the next three weeks
 # if no shifts have been assigned, display either "no shift available" or blank if we're using a calendar format
 @app.route('/schedule')
+@jwt_required()
 def getSchedule():
     pass
 
 # for those with priveleges, return a list of employees 
 # we'll turn them into links to lead to employee information and for assigning shifts
 @app.route('/employees')
+@jwt_required()
 def getEmployees():
     pass
 
 # display employee information
 @app.route('/info/<int:employee_id>', methods = ['GET'])
+@jwt_required()
 def displayEmployeeInfo(employee_id):
     pass
 
@@ -197,6 +201,7 @@ def clockout():
 
 
 @app.route('/assign_shift', methods=['POST'])
+@jwt_required()
 def assign_shift():
     data = request.get_json()
     employee_id = data['employee_id']
