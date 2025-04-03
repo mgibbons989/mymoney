@@ -28,30 +28,30 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 migrate = Migrate(app, db)
 
-class User(db.Model):
+class Employees(db.Model): #USED TO BE Users
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
+    position = 'inserthereplease'
 
-class ClockInOut(db.Model):
+class Timesheet(db.Model): #USED TO BE ClockInClockOut
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    clock_in = db.Column(db.DateTime, nullable=False)
+
+    employee_id = db.Column(db.Integer, db.ForeignKey('Employees.id'), nullable=False)
+
+    date = db.Column(db.DateTime, nullable=True)
+    clock_in = db.Column(db.DateTime, nullable=True)
     clock_out = db.Column(db.DateTime, nullable=True)
+    # in code: if clock in exists, display clock out button
+    # if clock out exists, display clock in button and calculate the hours worked since clock in for the date
+    hours_Worked = db.Column(db.Integer, nullable=True)
 
-class Manager(db.Model):
+class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
 
-class Employee(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-
-class Shift(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
     start_time = db.Column(db.String(80), nullable=False)
     end_time = db.Column(db.String(80), nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
