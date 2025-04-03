@@ -80,18 +80,36 @@ class Positions(db.Model):
 def home():
     return jsonify({'message': 'Welcome to the Clock-In/Clock-Out API!'}), 200
 
+# validate email and password
+def valid_email():
+    pass
+
+def valid_password():
+    pass
+
 # Signup Route
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    email = data['email']
+    password = data['password']
+
+    if not valid_email(email):
+        return jsonify({"message": 'Invalid email address. Please try again.'}), 400
+    if not valid_password(password):
+        return jsonify({"message": 'Invalid password. Please try again.'}), 400
+    existing_user = Employee.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({"message": 'Email already registered. Please log in.'}), 409
     
-    user = Employee(email=data['email'], 
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    user = Employee(email=email, 
                     password_hash=hashed_password, 
                     first_name= data['fname'], 
                     last_name = data['lname'], 
                     position = data['position'])
-    
+
     db.session.add(user)
     db.session.commit()
     return jsonify({'message': 'Employee registered successfully'}), 201
@@ -107,6 +125,33 @@ def login():
         return jsonify({'access_token': access_token, 'first_name': user.first_name}), 200
     
     return jsonify({'message': 'Invalid credentials. Please try again or signup'}), 401
+
+@app.route('/logout')
+def logout():
+    pass
+
+#based on the chosen pay period, get pay from those dates and display them
+#OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
+@app.route('/getPayroll', method = ['GET', 'POST']) 
+def getPayroll():
+    pass
+
+# display the schedule for the next three weeks
+# if no shifts have been assigned, display either "no shift available" or blank if we're using a calendar format
+@app.route('/schedule')
+def getSchedule():
+    pass
+
+# for those with priveleges, return a list of employees 
+# we'll turn them into links to lead to employee information and for assigning shifts
+@app.route('/employees')
+def getEmployees():
+    pass
+
+# display employee information
+@app.route('info/<int:employee_id>', methods = ['GET'])
+def displayEmployeeInfo(employee_id):
+    pass
 
 # Protected Dashboard Route
 @app.route('/dashboard', methods=['GET'])
@@ -159,7 +204,7 @@ def assign_shift():
 
     # Check if employee exists
     employee = Employee.query.get(employee_id)
-    
+
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
