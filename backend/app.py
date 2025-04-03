@@ -88,7 +88,6 @@ def valid_email():
 def valid_password():
     pass
 
-# Signup Route
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
@@ -115,7 +114,6 @@ def signup():
     db.session.commit()
     return jsonify({'message': 'Employee registered successfully'}), 201
 
-# Login Route
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -155,7 +153,7 @@ def getSchedule():
 def getEmployees():
     pass
 
-# display employee information
+# display employee information for manager
 @app.route('/info/<int:employee_id>', methods = ['GET'])
 @jwt_required()
 def displayEmployeeInfo(employee_id):
