@@ -147,21 +147,24 @@ def clockout():
     
     return jsonify({'message': 'No active clock-in found'}), 404
 
+
 # Route for manager to assign a shift to an employee
 @app.route('/assign_shift', methods=['POST'])
 def assign_shift():
     data = request.get_json()
     employee_id = data['employee_id']
+    date = data['date']
     start_time = data['start_time']
     end_time = data['end_time']
 
     # Check if employee exists
     employee = Employee.query.get(employee_id)
+    
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
     # Create a new shift
-    new_shift = Shifts(start_time=start_time, end_time=end_time, employee_id=employee.id)
+    new_shift = Shifts(date = date, start_time=start_time, end_time=end_time, employee_id=employee.id)
     db.session.add(new_shift)
     db.session.commit()
     return jsonify({"message": "Shift assigned successfully!"}), 201
