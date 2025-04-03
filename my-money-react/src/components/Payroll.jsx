@@ -24,7 +24,7 @@ const Payroll = ({ employeeID, positionName }) => {
     /* 
     app.route('/get_wage/<position_name>', methods = ['GET'])
     def get_wage(position_name):
-        position = Position.query.filter_by(name = position_name).first()
+        position = Positions.query.filter_by(name = position_name).first()
         if position:
             return jsonify({'hourly_wage' : position.hourly_wage})
         return jsonify({'error': 'Position not found'}), 404

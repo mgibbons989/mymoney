@@ -31,11 +31,13 @@ migrate = Migrate(app, db)
 class Employees(db.Model): #USED TO BE Users
     id = db.Column(db.Integer, primary_key=True)
 
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    first_name = db.Column(db.String(255), nullable=False)
-    last_name = db.Column(db.String(255), nullable=False)
-    position = 'inserthereplease'
+    first_name = db.Column(db.String(150), nullable=False)
+    last_name = db.Column(db.String(150), nullable=False)
+    position = db.Column(db.Integer, db.ForeignKey('positions.id'), nullable=False)
+
+    position = db.relationship('Positions', backref='employees', lazy=True)
 
 class Timesheet(db.Model): #USED TO BE ClockInClockOut
     id = db.Column(db.Integer, primary_key=True)
@@ -47,15 +49,24 @@ class Timesheet(db.Model): #USED TO BE ClockInClockOut
     clock_out = db.Column(db.DateTime, nullable=True)
     # in code: if clock in exists, display clock out button
     # if clock out exists, display clock in button and calculate the hours worked since clock in for the date
-    hours_Worked = db.Column(db.Integer, nullable=True)
+    hours_Worked = db.Column(db.Float, nullable=True)
 
 class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
 
-    start_time = db.Column(db.String(80), nullable=False)
-    end_time = db.Column(db.String(80), nullable=False)
+    date = db.Column(db.DateTime, nullable=True)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+
+class Positions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    positionName = db.Column(db.String(150), nullable=False)
+    privileges = db.Column(db.Boolean, default = False, nullable=False)
+    hourly_wage = db.Column(db.Float, nullable=False)
+
 
 # Create the database tables
 # with app.app_context():
