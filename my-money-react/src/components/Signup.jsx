@@ -38,8 +38,18 @@ function Signup() {
                                         required
                                     />
                                 </div>
+
+
                                 <div className="form-group">
                                     <label>Password:</label>
+                                    <input
+                                        type="password"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Confirm Password:</label>
                                     <input
                                         type="password"
                                         required
@@ -48,22 +58,15 @@ function Signup() {
                             </div>
 
                             <div>
-                                <label>Type:</label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        value="buyer"
-                                    />
-                                    Buyer
-                                </label>
-
-                                <label>
-                                    <input
-                                        type="radio"
-                                        value="seller"
-                                    />
-                                    Seller
-                                </label>
+                                <div className="form-group">
+                                    <label>Position:</label>
+                                    <select>
+                                        <option>--Choose--</option>
+                                        <option>General Employee</option>
+                                        <option>Manager</option>
+                                        <option>Placeholder</option>
+                                    </select>
+                                </div>
                             </div>
                             <button type="submit">Register</button>
                         </form>
