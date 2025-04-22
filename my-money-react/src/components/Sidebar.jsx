@@ -1,28 +1,49 @@
 import {
-    Clock, DollarSign, Calendar, Home, Users, Settings, HelpCircle, LogOut, Menu
+    DollarSign, Calendar, Home, Users, Settings, HelpCircle, LogOut, User
 } from "lucide-react"
-
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function Sidebar() {
+
     return (
         <>
             <div className="side-header">
-                <span className="icon"><DollarSign /></span>
+                <span className="icon"><User /></span>
                 <span>Employee Portal</span>
             </div>
             <nav className="side">
-                <button><span className="icon"><Home /></span> Dashboard</button>
-                <button><span className="icon"><Clock /></span> Time Sheet</button>
-                <button><span className="icon"><Calendar /></span> Schedule</button>
+
+                <Link to="/dashboard">
+                    <button><span className="icon"><Home /></span> Dashboard</button>
+                </Link>
+
+                <Link to="/payroll">
+                    <button><span className="icon"><DollarSign /></span> Earnings</button>
+                </Link>
+
+                <Link to="/schedule">
+                    <button><span className="icon"><Calendar /></span> Schedule</button>
+                </Link>
 
                 {/* TO DOOOOO if the user has extra privileges then display this tab */}
-                <button><span className="icon"><Users /></span> Employees</button>
+                <Link to="/employees">
+                    <button><span className="icon"><Users /></span> Employees</button>
+                </Link>
 
-                <button><span className="icon"><Settings /></span> Settings</button>
+                <Link to="/">
+                    <button><span className="icon"><Settings /></span> Settings</button>
+                </Link>
             </nav>
             <div className="side-footer">
-                <button><span className="icon"><HelpCircle /></span>Help</button>
-                <button><span className="icon"><LogOut /></span>Logout</button>
+
+                <Link to="/">
+                    <button><span className="icon"><HelpCircle /></span>Help</button>
+                </Link>
+
+                <Link to="/">
+                    <button><span className="icon"><LogOut /></span>Logout</button>
+                </Link>
             </div>
         </>
     )

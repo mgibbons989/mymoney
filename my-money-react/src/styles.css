@@ -329,6 +329,11 @@ footer {
     flex-direction: column;
 }
 
+.side a,
+.side-footer a {
+    text-decoration: none;
+}
+
 .side button,
 .side-footer button {
     background: none;
@@ -341,6 +346,7 @@ footer {
     cursor: pointer;
     align-items: center;
     font-size: 1rem;
+    width: 100%;
 }
 
 .side button:hover,
