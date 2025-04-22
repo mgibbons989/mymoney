@@ -10,8 +10,7 @@
     padding: 0 1rem 0 1rem;
 }
 
-.pay-label,
-.shift-header {
+.pay-label {
     display: block;
     margin-bottom: 1rem;
     font-size: 1.2rem;
@@ -32,11 +31,43 @@
 
 .pay-main .card {
     padding: 1.3rem;
-    margin-top: 2rem;
+}
+
+.pay-period-select {
+    margin-bottom: 2rem;
+}
+
+.shift-header {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 450;
 }
 
 .shift-list {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.shift,
+.shift-headers {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.shift-headers {
+    font-weight: 490;
+}
+
+.total-wages {
+    margin-top: 1rem;
+    text-align: right;
+    font-weight: 500;
+}
+
+.total-amt {
+    font-weight: bold;
 }
