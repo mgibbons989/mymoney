@@ -38,6 +38,11 @@
     grid-column: span 2;
 }
 
+small {
+    color: rgb(187, 187, 187);
+}
+
+
 .date {
     font-size: 1.8rem;
     font-weight: bold;

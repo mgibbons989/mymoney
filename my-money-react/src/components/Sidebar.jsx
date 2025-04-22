@@ -36,11 +36,6 @@ function Sidebar() {
                 </Link>
             </nav>
             <div className="side-footer">
-
-                <Link to="/">
-                    <button><span className="icon"><HelpCircle /></span>Help</button>
-                </Link>
-
                 <Link to="/">
                     <button><span className="icon"><LogOut /></span>Logout</button>
                 </Link>

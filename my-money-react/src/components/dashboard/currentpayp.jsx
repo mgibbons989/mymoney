@@ -1,11 +1,10 @@
-import "./dash.css"
-
 
 function CurrentPayPeriod() {
     return (
         <>
-            <div>
-                <h2>Current Pay Period</h2>
+            <div className="pay-sum">
+                <h2>Pay Period Summary</h2>
+                <small>Current time and shift status</small>
                 <div className="wages">
                     <div>Total Wages:</div>
                     <div className="sumwage">$55</div>

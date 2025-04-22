@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { format } from "date-fns"
-import "./dash.css"
 
 function TimeClock() {
 
@@ -23,6 +22,7 @@ function TimeClock() {
         <>
             <div className='timeclock'>
                 <h2>Time Clock</h2>
+                <small>Current time and shift status</small>
                 <div className='date'>{format(currentTime, "EEEE, MMMM d, yyyy")}</div>
                 <div className='clock'>{format(currentTime, "h:mm:ss a")}</div>
                 {/* TO DOOOOOOOOOO if clocked in display clock in time */}
