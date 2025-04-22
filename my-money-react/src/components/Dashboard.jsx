@@ -22,7 +22,6 @@ function Dashboard() {
 
                     <div className="top right">
                         <CurrentPayPeriod />
-
                     </div>
 
                     <div className="bottom">
