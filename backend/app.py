@@ -140,9 +140,31 @@ def getPayroll():
 @app.route('/getShifts')
 @jwt_required()
 def getSchedule():
-    pass
+    employee_id = get_jwt_identity()
+    today = db.func.date(db.func.now())
 
-# for those with priveleges, return a list of employees 
+    shifts = (
+        Shifts.query
+        .filter(Shifts.employee_id == employee_id, Shifts.date >= today)
+        .order_by(Shifts.date.asc())
+        .all()
+    )
+
+    shift_data = [
+
+        {
+        "shift_date": shift.date.isoformat(),
+        "start_time": shift.start_time.strftime("%H:%M"),
+        "end_time": shift.end_time.strftime("%H:%M"),
+        }
+
+        for shift in shifts
+    ]
+
+    return jsonify(shift_data), 200
+    
+
+# for those with privileges, return a list of employees 
 # we'll turn them into links to lead to employee information and for assigning shifts
 @app.route('/employees')
 @jwt_required()

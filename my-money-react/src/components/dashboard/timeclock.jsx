@@ -35,6 +35,8 @@ function TimeClock() {
             console.error('Error checking clocked in status', error);
         }
     }
+
+
     const handleClockinOut = async () => {
         if(clockedIn == null){
             await checkClockStatus();
@@ -76,8 +78,8 @@ function TimeClock() {
                 <div className='clock'>{format(currentTime, "h:mm:ss a")}</div>
 
                 <div className='butn'>
-                    <button onClick=
-                    {handleClockinOut}>{clockedIn === null ? 'Loading...' : clockedIn ? 'Clock Out': 'Clock In'}
+                    <button onClick={handleClockinOut}>
+                        {clockedIn === null ? 'Loading...' : clockedIn ? 'Clock Out': 'Clock In'}
                     </button>
                 </div>
             </div>

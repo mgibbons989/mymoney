@@ -1,5 +1,21 @@
+import { useEffect, useState } from "react";
 
 function CurrentPayPeriod() {
+
+    const [shifts, setShifts] = useState([]);
+
+    useEffect(() => {
+        const getShifts = async () => {
+            const token = localStorage.getItem("acess_token");
+            const res = await fetch("http://localhost:5000/getShifts", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            setShifts(data.slice(0,3));
+        };
+
+        getShifts();
+    }, []);
     return (
         <>
             <div className="pay-sum">
