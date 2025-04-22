@@ -6,6 +6,11 @@
 }
 
 .dashmain {
+    padding: 1rem 0 0 1rem;
+    width: 100%;
+}
+
+.dash-middle {
     /* border: 2px solid black; */
     width: 100%;
     display: flex;

@@ -38,7 +38,6 @@ const Calendar = () => {
 
     return (
         <div className="cal-content">
-            <h2>Schedule</h2>
             <FullCalendar
                 plugins={[dayGridPlugin, bootstrap5Plugin, interactionPlugin]}
                 themeSystem="bootstrap5"

@@ -15,6 +15,7 @@ function ShiftList() {
                 </div> */}
 
                 <ul className="shift-list">
+                    {/* LOOP THROUGH SHIFTS HERE */}
                     <li className="shift">
                         <span>Monday, April 21 (9:00 - 5:00)</span>
                         <span> 8.0 hrs</span>

@@ -20,7 +20,9 @@ function Schedule() {
                     </aside>
 
                     <div className="sched-main">
-                        <div>
+                        <h2>Schedule</h2>
+
+                        <div className="cal">
                             <Calendar />
                         </div>
 

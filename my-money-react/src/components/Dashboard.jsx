@@ -22,19 +22,22 @@ function Dashboard() {
                     </aside>
 
                     <div className="dashmain">
+                        <div className="dashheader"><h2>Welcome to Your Dashboard /name/!</h2></div>
 
-                        <div className="dash-grid">
+                        <div className="dash-middle">
+                            <div className="dash-grid">
 
-                            <div className="card">
-                                <TimeClock />
-                            </div>
+                                <div className="card">
+                                    <TimeClock />
+                                </div>
 
-                            <div className="card">
-                                <CurrentPayPeriod />
-                            </div>
+                                <div className="card">
+                                    <CurrentPayPeriod />
+                                </div>
 
-                            <div className="card full">
-                                <UpcomingShifts />
+                                <div className="card full">
+                                    <UpcomingShifts />
+                                </div>
                             </div>
                         </div>
                     </div>
