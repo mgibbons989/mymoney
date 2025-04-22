@@ -5,6 +5,7 @@ import Footer from "./footer";
 import TimeClock from "./dashboard/timeclock";
 import CurrentPayPeriod from "./dashboard/currentpayp";
 import UpcomingShifts from "./dashboard/upcoming";
+import Sidebar from "./Sidebar";
 
 import "./dashboard/dash.css"
 
@@ -14,26 +15,27 @@ function Dashboard() {
             <Header />
             <div className="main-content">
 
-                <div className="sidebar">
-                    {/* SIDEBAR */}
-                </div>
+                <div className="dashcontent">
 
-                <div className="dashmain">
+                    <aside className="sidebar">
+                        <Sidebar />
+                    </aside>
 
-                    <div className="dash-grid">
+                    <div className="dashmain">
 
-                        <div className="card">
-                            <TimeClock />
-                        </div>
+                        <div className="dash-grid">
 
-                        <div className="card">
-                            <CurrentPayPeriod />
-                        </div>
+                            <div className="card">
+                                <TimeClock />
+                            </div>
 
+                            <div className="card">
+                                <CurrentPayPeriod />
+                            </div>
 
-                        <div className="card full">
-                            <UpcomingShifts />
-
+                            <div className="card full">
+                                <UpcomingShifts />
+                            </div>
                         </div>
                     </div>
                 </div>
