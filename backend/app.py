@@ -66,13 +66,12 @@ class Positions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     positionName = db.Column(db.String(150), nullable=False)
-    privileges = db.Column(db.Boolean, default = False, nullable=False)
+    privs = db.Column(db.Boolean, default = False, nullable=False)
     hourly_wage = db.Column(db.Float, nullable=False)
 
-
 # Create the database tables
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():
@@ -136,9 +135,9 @@ def logout():
 def getPayroll():
     pass
 
-# display the schedule for the next three weeks
+
 # if no shifts have been assigned, display either "no shift available" or blank if we're using a calendar format
-@app.route('/schedule')
+@app.route('/getShifts')
 @jwt_required()
 def getSchedule():
     pass
