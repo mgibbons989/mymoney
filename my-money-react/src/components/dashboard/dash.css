@@ -1,6 +1,7 @@
 .dashcontent {
     display: flex;
     width: 100%;
+    height: 100%;
     flex: 1;
 }
 
@@ -10,51 +11,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.sidebar {
-    width: 220px;
-    background: #1f2937;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.side-header {
-    padding: 1rem;
-    font-weight: bold;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    border-bottom: 1px solid #374151;
-}
-
-.side,
-.side-footer {
-    display: flex;
-    flex-direction: column;
-}
-
-.side button,
-.side-footer button {
-    background: none;
-    border: none;
-    color: white;
-    text-align: left;
-    padding: 1rem;
-    display: flex;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.side button:hover {
-    transition: all 0.2s ease-in-out;
-    background-color: #687a97;
-}
-
-.side button.active {
-    background: #374151;
 }
 
 .card {

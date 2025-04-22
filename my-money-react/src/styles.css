@@ -1,178 +1,9 @@
-/* #root {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-
-
-body,
-html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-}
-
-header {
-    background-color: var(--primary-color);
-    
-    color: white;
-    padding: 5px 20px 0px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.title {
-    font-family: 1.5rem;
-    font-weight: 600;
-}
-
-header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-header nav ul {
-    list-style: none;
-}
-
-header nav button {
-    font-size: 1.1rem;
-    font-family: 'Poppins', sans-serif;
-    color: white;
-    background: transparent;
-    border: none;
-    text-decoration: none;
-    border-radius: 15px;
-    padding: 10px;
-    font-weight: 550;
-}
-
-header nav button:hover {
-    background-color: #a35151;
-}
-
-footer {
-    background-color: var(--primary-color);
-    color: white;
-    text-align: center;
-    padding: 6px;
-    margin-top: auto;
-}
-
-
-.main-content {
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-}
-
-
-.login-left {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-image {
-    width: 80%;
-    height: 300px;
-    background-color: #e5e7eb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #6b7280;
-    font-size: 1.2rem;
-    border-radius: 8px;
-}
-
-.login-right {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.login-card {
-    width: 100%;
-    max-width: 350px;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background-color: white;
-}
-
-.login-card h2 {
-    margin-bottom: 1rem;
-    color: #1e3a8a;
-}
-
-.login-card form {
-    display: flex;
-    flex-direction: column;
-}
-
-.login-card label {
-    margin: 0.5rem 0 0.2rem;
-}
-
-.login-card input {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 5px;
-}
-
-.login-card button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.6rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 1rem;
-}
-
-.login-card button:hover {
-    background-color: #3749b5;
-}
-
-.login-card p {
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-.login-card a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.login-card a:hover {
-    color: #315cd3;
-    text-decoration: underline;
-} */
-
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
 
 :root {
-    --primary-color: #011364;
+    --primary-color: #10247e;
     --secondary-color: #f8f9fa;
     --accent-color: #0329ce;
     --text-color: black;
@@ -464,4 +295,60 @@ footer {
     flex: 1;
     text-align: left;
     margin-right: 10px;
+}
+
+
+.sidebar {
+    width: 220px;
+    background: #1f2937;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.side-header {
+    padding: 1rem;
+    font-weight: bold;
+    display: flex;
+    gap: 0.2rem;
+    align-items: center;
+    border-bottom: 1px solid #374151;
+    justify-items: center;
+    font-size: 1.1rem;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+}
+
+.side,
+.side-footer {
+    display: flex;
+    flex-direction: column;
+}
+
+.side button,
+.side-footer button {
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    padding: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    cursor: pointer;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.side button:hover,
+.side-footer button:hover {
+    transition: all 0.2s ease-in-out;
+    background-color: #687a97;
+}
+
+.side button.active {
+    background: #374151;
 }

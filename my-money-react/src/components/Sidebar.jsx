@@ -18,7 +18,7 @@ function Sidebar() {
                 {/* TO DOOOOO if the user has extra privileges then display this tab */}
                 <button><span className="icon"><Users /></span> Employees</button>
 
-                <button><span className="icon"><Settings /></span> Dashboard</button>
+                <button><span className="icon"><Settings /></span> Settings</button>
             </nav>
             <div className="side-footer">
                 <button><span className="icon"><HelpCircle /></span>Help</button>
