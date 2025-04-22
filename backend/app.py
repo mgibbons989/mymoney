@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -57,6 +58,7 @@ class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
+    employee = db.relationship('Employee', backref='shifts')
 
     date = db.Column(db.DateTime, nullable=True)
     start_time = db.Column(db.DateTime, nullable=False)
@@ -141,25 +143,39 @@ def getPayroll():
 @jwt_required()
 def getSchedule():
     employee_id = get_jwt_identity()
-    today = db.func.date(db.func.now())
+    # today = db.func.date(db.func.now())
 
     shifts = (
         Shifts.query
-        .filter(Shifts.employee_id == employee_id, Shifts.date >= today)
+        .filter(employee_id == employee_id)
         .order_by(Shifts.date.asc())
         .all()
     )
 
-    shift_data = [
+    shift_data = []
 
-        {
-        "shift_date": shift.date.isoformat(),
-        "start_time": shift.start_time.strftime("%H:%M"),
-        "end_time": shift.end_time.strftime("%H:%M"),
-        }
+    for shift in shifts:
 
-        for shift in shifts
-    ]
+        shift_start = datetime.combine(shift.shift_date, shift.start_time)
+        shift_end = datetime.combine(shift.shift_date, shift.end_time)
+
+        duration = shift_end - shift_start
+
+        hours_worked = duration.total_seconds() / 3600
+
+        wage = shift.employee.position.hourly_wage
+
+        total_earned = round(hours_worked * wage, 2)
+        
+        shift_data.append({
+            "shift_date": shift.date.isoformat(),
+            "start_time": shift.start_time.strftime("%H:%M"),
+            "end_time": shift.end_time.strftime("%H:%M"),
+            "hours": round(hours_worked, 2),
+            "wage_per_hour": wage,
+            "total_earned": total_earned,
+        })
+    
 
     return jsonify(shift_data), 200
     
