@@ -3,6 +3,7 @@ import Header from "./header";
 import Footer from "./footer";
 import Sidebar from "./Sidebar";
 import EmployeeList from "./employees/employeelist";
+import "./employees/emp.css"
 
 function Employees() {
     return (
@@ -18,6 +19,7 @@ function Employees() {
                     </aside>
 
                     <div className="emp-main">
+                        <h2>Employees</h2>
                         <EmployeeList />
                     </div>
 
