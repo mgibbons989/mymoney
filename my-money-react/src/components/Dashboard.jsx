@@ -2,31 +2,39 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "./header";
 import Footer from "./footer";
-import TimeClock from "./parts/timeclock";
-import CurrentPayPeriod from "./parts/currentpayp";
-import UpcomingShifts from "./parts/upcoming";
+import TimeClock from "./dashboard/timeclock";
+import CurrentPayPeriod from "./dashboard/currentpayp";
+import UpcomingShifts from "./dashboard/upcoming";
+
+import "./dashboard/dash.css"
 
 function Dashboard() {
     return (
         <>
             <Header />
             <div className="main-content">
+
                 <div className="sidebar">
                     {/* SIDEBAR */}
                 </div>
 
                 <div className="dashmain">
-                    <div className="top left">
-                        <TimeClock />
-                    </div>
 
-                    <div className="top right">
-                        <CurrentPayPeriod />
-                    </div>
+                    <div className="dash-grid">
 
-                    <div className="bottom">
-                        <UpcomingShifts />
+                        <div className="card">
+                            <TimeClock />
+                        </div>
 
+                        <div className="card">
+                            <CurrentPayPeriod />
+                        </div>
+
+
+                        <div className="card full">
+                            <UpcomingShifts />
+
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,13 +1,17 @@
 function UpcomingShifts() {
+
+
+
     return (
         <>
-            <div className="card">
+            <div>
                 <h2>Upcoming Shifts</h2>
-                <div className="projected wages">
-                    <span>Projected Earnings:</span>
-                    <span>$PROJECTEDWAGES</span>
+
+                <div className="wages">
+                    <div>Projected Earnings:</div>
+                    <div className="sumwage">$PROJECTEDWAGES</div>
                 </div>
-                <div className="futureshifts">
+                <div className="future-shifts">
                     DISPLAY LIST OF FUTURE SHIFTS HERE
                 </div>
             </div>

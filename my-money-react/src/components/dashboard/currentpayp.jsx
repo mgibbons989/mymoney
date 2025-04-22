@@ -1,13 +1,16 @@
+import "./dash.css"
+
+
 function CurrentPayPeriod() {
     return (
         <>
-            <div className="card">
+            <div>
                 <h2>Current Pay Period</h2>
                 <div className="wages">
-                    <span>Total Wages:</span>
-                    <span>$WAGES HERE FROM DATABASE</span>
+                    <div>Total Wages:</div>
+                    <div className="sumwage">$55</div>
                 </div>
-                <div className="shiftList">
+                <div className="shift-list">
                     DISPLAY SHIFT LIST HERE
                 </div>
             </div>

@@ -1,0 +1,77 @@
+.card {
+    border: 2px gray solid;
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.7rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 1rem;
+}
+
+.full {
+    grid-column: span 2;
+}
+
+.date {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.clock {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.wages {
+    display: flex;
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    justify-content: space-between;
+}
+
+.sumwage {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.shift-list>div,
+.future-shifts>div {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border: 1px solid #eee;
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.timeclock button {
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    width: 80%;
+    background-color: black;
+    border-radius: 0.5rem;
+    text-align: center;
+    border: 1px black solid;
+    padding: 0.7rem;
+}
+
+.timeclock button:hover {
+    transition: all 0.1s ease-in-out;
+    color: black;
+    background-color: white;
+}
+
+.timeclock .butn {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}

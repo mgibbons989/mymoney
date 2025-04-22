@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from "date-fns"
-import {
-    Clock, DollarSign, Calendar, Home, Users, Settings, HelpCircle, LogOut, Menu
-} from "lucide-react"
-
+import "./dash.css"
 
 function TimeClock() {
 
@@ -13,7 +10,7 @@ function TimeClock() {
         return () => clearInterval(timer)
     }, [])
 
-    const handleCLockinOut = () => {
+    const handleClockinOut = () => {
         // *************TO DO*******************
         // if employee is already clocked in, set clock out time, set hoursworked(clock out - clock in)
         // save to database
@@ -24,13 +21,15 @@ function TimeClock() {
 
     return (
         <>
-            <div className='card'>
+            <div className='timeclock'>
                 <h2>Time Clock</h2>
-                <div>{format(currentTime, "EEEE, MMMM d, yyyy")}</div>
-                <div>{format(currentTime, "h:mm a")}</div>
+                <div className='date'>{format(currentTime, "EEEE, MMMM d, yyyy")}</div>
+                <div className='clock'>{format(currentTime, "h:mm:ss a")}</div>
                 {/* TO DOOOOOOOOOO if clocked in display clock in time */}
 
-                <div><button>Clock in</button></div>
+                <div className='butn'>
+                    <button onClick={handleClockinOut}>{ }Clock In</button>
+                </div>
             </div>
         </>
     )
