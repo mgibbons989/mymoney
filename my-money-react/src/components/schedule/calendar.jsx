@@ -14,6 +14,8 @@ Modal.setAppElement('#root');
 const Calendar = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
+    // TO DOOOOOOOOOOOOOOOOOO
+    // GET SHIFTS FROM THE SHIFTS TABLE INSTEAD OF HARD CODING HERE
     const [shifts, setShifts] = useState([
         { title: 'Morning Shift - 6 hrs', date: '2025-04-21' },
         { title: 'Evening Shift - 4 hrs', date: '2025-04-22' },
