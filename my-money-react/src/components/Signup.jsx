@@ -9,6 +9,7 @@ import "../register.css";
 function Signup() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [cpassword, setCpassword] = useState("")
     const [fname, setFname] = useState("")
     const [lname, setLname] = useState("")
     const [position, setPosition] = useState("")
@@ -16,6 +17,10 @@ function Signup() {
 
     const handleSignup = async (e) => {
         e.preventDefault();
+        if (password !== cpassword) {
+            alert("Passwords do not match");
+            return;
+        }
 
         const res = await fetch("http://localhost:5000/signup", {
             method: "POST",
@@ -47,6 +52,7 @@ function Signup() {
                                         type="text"
                                         id='fname'
                                         name='fname'
+                                        value={fname}
                                         onChange={e => setFname(e.target.value)}
                                         required
                                     />
@@ -57,6 +63,7 @@ function Signup() {
                                         type="text"
                                         id='lname'
                                         name='lname'
+                                        value={lname}
                                         onChange={e => setLname(e.target.value)}
                                         required
                                     />
@@ -70,6 +77,7 @@ function Signup() {
                                         type="email"
                                         id="email"
                                         name="email"
+                                        value={email}
                                         onChange={e => setEmail(e.target.value)}
                                         required
                                     />
@@ -82,6 +90,7 @@ function Signup() {
                                         type="password"
                                         id="password"
                                         name="password"
+                                        value={password}
                                         onChange={e => setPassword(e.target.value)}
                                         required
                                     />
@@ -93,7 +102,8 @@ function Signup() {
                                         type="password"
                                         id="cpassword"
                                         name="cpassword"
-
+                                        value={cpassword}
+                                        onChange={e => setCpassword(e.target.value)}
                                         required
                                     />
                                 </div>
@@ -102,11 +112,10 @@ function Signup() {
                             <div>
                                 <div className="form-group">
                                     <label>Position:</label>
-                                    <select>
-                                        <option>--Choose--</option>
-                                        <option>General Employee</option>
-                                        <option>Manager</option>
-                                        <option>Placeholder</option>
+                                    <select id="position" value={position} onChange={e => setPosition(e.target.value)}>
+                                        <option value={""}>--Choose--</option>
+                                        <option value={"General-Employee"}>General Employee</option>
+                                        <option value={"General-Manager"}>GeneralManager</option>
                                     </select>
                                 </div>
                             </div>

@@ -164,6 +164,19 @@ def dashboard():
     user = Employee.query.get(current_user_id)
     return jsonify({'message': f'Welcome, {user.first_name}'}), 200
 
+@app.route('/clock-in-status', methods = ['GET'])
+@jwt_required()
+def clock_status():
+    employee_id = get_jwt_identity()
+    today = db.func.date(db.func.now())
+
+    time = Timesheet.query.filter_by(employee_id=employee_id, date=today).first()
+    if time and time.clock_out is None:
+        return jsonify({'clocked_in': True}), 200
+    else:
+        return jsonify({'clocked_in': False}), 200
+
+
 @app.route('/clockin', methods=['POST'])
 @jwt_required()
 def clockin():
