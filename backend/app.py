@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from flask_cors import CORS
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 import urllib.parse
 import re
@@ -23,6 +24,7 @@ DB_NAME = os.getenv('DB_NAME')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{encoded_password}@{DB_HOST}/{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'tempsecretkey')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
 app.secret_key = "temp_secret_key29"
 
 db = SQLAlchemy(app)
@@ -301,6 +303,7 @@ def curr_employee_info():
             "first_name": employee.first_name,
             "last_name": employee.last_name,
             "email": employee.email,
+            "privs": employee.position.privs
         }), 200
     else:
         return jsonify({"message": "Employee not found"}), 404

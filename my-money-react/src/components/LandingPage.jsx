@@ -2,6 +2,8 @@ import { useState } from "react";
 import "../styles.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "./UserContext";
 
 import Header from "./header";
 import Footer from "./footer";
@@ -11,6 +13,8 @@ function LandingPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+
+    const { setUser } = useContext(UserContext);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -23,7 +27,19 @@ function LandingPage() {
         const data = await result.json();
         if (result.ok) {
             localStorage.setItem("access_token", data.access_token);
-            navigate("/dashboard");
+
+            const userRes = await fetch("http://localhost:5000/api/employee", {
+                headers: { Authorization: `Bearer ${data.access_token}` },
+            });
+
+            if (userRes.ok) {
+                const userData = await userRes.json();
+                setUser(userData);
+                navigate("/dashboard");
+            }
+            else {
+                alert("Logged in, but failed to fetch user info.");
+            }
         } else {
             alert(data.message);
         }

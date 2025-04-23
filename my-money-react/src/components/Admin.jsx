@@ -36,11 +36,6 @@ function Management() {
                     </div>
 
                 </div>
-                {/* Control the database
-                    add positions
-                    edit privileges
-                    control privileges for every employee including managers
-                     */}
             </div>
 
             <Footer />

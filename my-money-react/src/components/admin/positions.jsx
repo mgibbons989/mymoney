@@ -59,20 +59,32 @@ function Positions() {
         <>
             <div className="pos-list">
                 <h3>Positions</h3>
-                {positions.map(pos => (
-                    <div key={pos.id} className="positionlist">
-                        <div>
-                            <p className="posName">{pos.positionName}</p>
-                            <p>${pos.hourly_wage}/hr | Privileges: {pos.privs ? "Yes" : "No"}</p>
-                        </div>
 
-                        <div className="posChange">
-                            <button className="edit">Edit</button>
-                            <button className="delete">Delete</button>
-                        </div>
+                <div >
+                    <ul className="positionlist">
+                        {positions.length === 0 ? (
+                            <li>No posiitions</li>
+                        ) :
+                            (
+                                positions.map(pos => (
+                                    <li key={pos.id} className="posNames">
+                                        <div className="pos-det">
+                                            <span className="posName">{pos.positionName}</span>
+                                            <span>Wage: ${pos.hourly_wage}/hr</span>
+                                            <span>Granted Privileges? {pos.privs ? "Yes" : "No"}</span>
+                                        </div>
 
-                    </div>
-                ))}
+                                        <div className="posChange">
+                                            <button className="edit">Edit</button>
+                                            <button className="delete">Delete</button>
+                                        </div>
+
+                                    </li>
+                                ))
+                            )}
+                    </ul>
+                </div>
+
                 <button onClick={() => setModalOpen(true)} className="posAdd">Add Position</button>
 
                 <AddPosition

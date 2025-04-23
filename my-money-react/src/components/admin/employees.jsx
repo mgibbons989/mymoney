@@ -7,7 +7,9 @@ function Employees() {
         const token = localStorage.getItem("access_token");
 
         const fetchData = async () => {
-            const resEmployees = await fetch("http://localhost:5000/employees");
+            const resEmployees = await fetch("http://localhost:5000/employees", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setEmployees(await resEmployees.json());
         };
 
@@ -18,15 +20,21 @@ function Employees() {
         <>
             <div className="emps">
                 <h3>Employees</h3>
-                {employees.map(emp => (
-                    <div key={emp.id} className="man-employee">
-                        <div>
-                            <p className="empName">{emp.fname} {emp.lname}</p>
-                            <p>Email: {emp.email}</p>
-                            <p>Positon: {emp.position}</p>
-                        </div>
-                    </div>
-                ))}
+
+                <div className="admin-emp-list">
+
+                    <ul className="man-employee">
+                        {employees.length === 0 ? (
+                            <li>No Employees</li>
+                        ) : (
+                            employees.map(emp => (
+                                <li key={emp.id} className="empName">
+                                    <span>Name: {emp.fname} {emp.lname}</span>  <span>Email: {emp.email}</span>  <span>Position: {emp.position}</span>
+                                </li>
+                            ))
+                        )}
+                    </ul>
+                </div>
             </div>
         </>
     )
