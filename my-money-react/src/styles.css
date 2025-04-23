@@ -234,7 +234,6 @@ footer {
     color: var(--secondary-color);
     text-align: center;
     padding: 5px;
-    margin-top: auto;
 }
 
 
@@ -297,6 +296,11 @@ footer {
     margin-right: 10px;
 }
 
+.form-card p {
+    margin-top: 1rem;
+    text-align: center;
+}
+
 
 .sidebar {
     width: 220px;
@@ -357,4 +361,8 @@ footer {
 
 .side button.active {
     background: #374151;
+}
+
+.positiondrop {
+    width: 95%;
 }
