@@ -1,5 +1,5 @@
 import {
-    DollarSign, Calendar, Home, Users, Settings, HelpCircle, LogOut, User
+    DollarSign, Calendar, Home, Users, Settings, BookText, LogOut, User
 } from "lucide-react"
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -29,6 +29,10 @@ function Sidebar() {
                 {/* TO DOOOOO if the user has extra privileges then display this tab */}
                 <Link to="/employees">
                     <button><span className="icon"><Users /></span> Employees</button>
+                </Link>
+
+                <Link to="/adminpage">
+                    <button><span className="icon"><BookText /></span> System Management</button>
                 </Link>
 
                 <Link to="/">

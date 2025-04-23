@@ -179,13 +179,79 @@ def getSchedule():
 
     return jsonify(shift_data), 200
     
+@app.route('/positions')
+@jwt_required()
+def positions():
+    curr_pos = Positions.query.all()
+    pos_data = []
+
+    for pos in curr_pos:
+        
+        positionName = pos.positionName
+        privs = pos.privs
+        hourly_wage = pos.hourly_wage
+
+        pos_data.append({
+            "id": pos.id,
+            "positionName": positionName,
+            "privs": privs,
+            "hourly_wage": hourly_wage,
+        })
+    
+    return jsonify(pos_data), 200
+
+@app.route('/addPosition', methods = ['POST'])
+@jwt_required()
+def addPosition():
+    data = request.get_json()
+
+    positionName = data.get('positionName')
+    privs = data.get('privs', False)
+    hourly_wage = data.get('hourly_wage')
+
+    if not positionName or hourly_wage is None:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    position = Positions(
+        positionName = positionName,
+        privs = bool(privs),
+        hourly_wage= float(hourly_wage)
+    )
+
+    db.session.add(position)
+    db.session.commit()
+
+    return jsonify({
+        'id': position.id,
+        'positionName': position.positionName,
+        'privs': position.privs,
+        'hourly_wage': position.hourly_wage
+        }), 201
+
 
 # for those with privileges, return a list of employees 
 # we'll turn them into links to lead to employee information and for assigning shifts
 @app.route('/employees')
 @jwt_required()
 def getEmployees():
-    pass
+    curr_emps = Employee.query.all()
+    emp_data = []
+
+    for emp in curr_emps:
+        fname = emp.first_name
+        lname = emp.last_name
+        email = emp.email
+        position = emp.position.positionName
+
+        emp_data.append({
+            "id" : emp.id,
+            "fname": fname,
+            "lname": lname,
+            "email" : email,
+            "position": position,
+        })
+    
+    return jsonify(emp_data), 200
 
 # display employee information for manager
 @app.route('/info/<int:employee_id>', methods = ['GET'])
@@ -193,7 +259,20 @@ def getEmployees():
 def displayEmployeeInfo(employee_id):
     pass
 
+@app.route('/api/employee', methods=['GET'])
+@jwt_required()
+def curr_employee_info():
+    employee_id = get_jwt_identity()  # or ID if you used ID instead
+    employee = Employee.query.filter_by(employee_id=employee_id).first()
 
+    if employee:
+        return jsonify({
+            "first_name": employee.first_name,
+            "last_name": employee.last_name,
+            "email": employee.email,
+        }), 200
+    else:
+        return jsonify({"message": "Employee not found"}), 404
 
 @app.route('/dashboard', methods=['GET'])
 @jwt_required()
