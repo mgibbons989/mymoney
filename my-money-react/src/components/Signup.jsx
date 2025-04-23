@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "./header";
 import Footer from "./footer";
@@ -13,7 +13,19 @@ function Signup() {
     const [fname, setFname] = useState("")
     const [lname, setLname] = useState("")
     const [position, setPosition] = useState("")
+
+    const [positions, setPositions] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const getPositions = async () => {
+            const resPositions = await fetch("http://localhost:5000/positions/public");
+            setPositions(await resPositions.json());
+        };
+
+        getPositions()
+    }, []);
+
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -112,17 +124,20 @@ function Signup() {
                             <div>
                                 <div className="form-group">
                                     <label>Position:</label>
-                                    <select id="position" value={position} onChange={e => setPosition(e.target.value)}>
+                                    <select id="position" className='positiondrop' value={position} onChange={e => setPosition(e.target.value)}>
                                         <option value={""}>--Choose--</option>
-                                        <option value={"General-Employee"}>General Employee</option>
-                                        <option value={"General-Manager"}>GeneralManager</option>
+
+                                        {positions.map(pos => (
+                                            <option value={pos.positionName}>{pos.positionName}</option>
+                                        ))}
+
                                     </select>
                                 </div>
                             </div>
                             <button type="submit">Register</button>
                         </form>
                         <p>
-                            Already have an account? <Link to="/">Login here</Link>
+                            Already have an account? Login <Link to="/">here</Link>
                         </p>
                     </div>
                 </div>

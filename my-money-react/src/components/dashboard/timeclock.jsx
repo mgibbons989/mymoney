@@ -10,57 +10,64 @@ function TimeClock() {
     }, [])
 
     const [clockedIn, setClockedIn] = useState(null)
-    const checkClockStatus = async () => {
-        try{
-            const token = localStorage.getItem('access_token');
 
-            const res = await fetch('http://localhost:5000/clock-in-status', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`, // send the JWT in the header
-                    'Content-Type': 'application/json',
-                  },
-            });
+    useEffect(() => {
+        const checkClockStatus = async () => {
+            try {
+                const token = localStorage.getItem('access_token');
 
-            const data = await res.json();
+                const res = await fetch('http://localhost:5000/clock-in-status', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-            if (data.clocked_in) {
-                setClockedIn(true);
+                const data = await res.json();
+                console.log("clockdata", data);
+
+                if (data.clocked_in) {
+                    setClockedIn(true);
+                }
+                else {
+                    setClockedIn(false);
+                }
             }
-            else{
-                setClockedIn(false);
+            catch (error) {
+                console.error('Error checking clocked in status', error);
             }
-        }
-        catch(error){
-            console.error('Error checking clocked in status', error);
-        }
-    }
+        };
+
+        checkClockStatus();
+    }, [])
+
 
 
     const handleClockinOut = async () => {
-        if(clockedIn == null){
-            await checkClockStatus();
-        }
+        // if (clockedIn == null) {
+        //     await checkClockStatus();
+        // }
 
-        if(clockedIn){
+        if (clockedIn) {
             await fetch('http://localhost:5000/clockout', {
                 method: 'POST',
                 headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                  'Content-Type': 'application/json',
-                }, 
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json',
+                },
             });
             setClockedIn(false)
         }
-        else{
+        else {
             await fetch('http://localhost:5000/clockin', {
                 method: 'POST',
                 headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                  'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json',
                 },
-              });
-              setClockedIn(true);
+            });
+            setClockedIn(true);
         }
         // if employee is already clocked in, set clock out time, set hoursworked(clock out - clock in)
         // save to database
@@ -79,7 +86,7 @@ function TimeClock() {
 
                 <div className='butn'>
                     <button onClick={handleClockinOut}>
-                        {clockedIn === null ? 'Loading...' : clockedIn ? 'Clock Out': 'Clock In'}
+                        {clockedIn === null ? 'Loading...' : clockedIn ? 'Clock Out' : 'Clock In'}
                     </button>
                 </div>
             </div>

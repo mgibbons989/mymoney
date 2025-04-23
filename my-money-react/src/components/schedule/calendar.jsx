@@ -1,39 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import interactionPlugin from '@fullcalendar/interaction';
-import Modal from 'react-modal';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fullcalendar/bootstrap5'; // applies Bootstrap theme
 
 import './sched.css'
-Modal.setAppElement('#root');
 
 const Calendar = () => {
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
     // TO DOOOOOOOOOOOOOOOOOO
     // GET SHIFTS FROM THE SHIFTS TABLE INSTEAD OF HARD CODING HERE
-    const [shifts, setShifts] = useState([
-        { title: 'Morning Shift - 6 hrs', date: '2025-04-21' },
-        { title: 'Evening Shift - 4 hrs', date: '2025-04-22' },
-        { title: 'Scheduled Shift - 8 hrs', date: '2025-04-24' }
-    ]);
+    const [shifts, setShifts] = useState([]);
+
+    useEffect(() => {
+        const getShifts = async () => {
+            try {
+                const token = localStorage.getItem("access_token");
+                const res = await fetch("http://localhost:5000/getShifts", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to fetch shifts");
+                }
+                const data = await res.json();
+
+                setShifts(data);
+            } catch (err) {
+                console.error("Error getting shifts", err)
+            }
+        };
+
+        getShifts();
+
+    }, []);
 
     const openModal = (info) => {
+        // console.log("Date clicked:", info.dateStr);
         setSelectedDate(info.dateStr);
-        setModalIsOpen(true);
+        setModalOpen(true);
     };
 
     const closeModal = () => {
-        setModalIsOpen(false);
+        setModalOpen(false);
         setSelectedDate('');
     };
 
     const getShiftsForDate = (dateStr) => {
-        return shifts.filter(shift => shift.date === dateStr);
+        return shifts.filter(shift => shift.shift_date === dateStr);
     };
 
     return (
@@ -48,20 +69,42 @@ const Calendar = () => {
             // eventColor="#ccc"
             // eventTextColor="black"
             />
-
-            <Modal isOpen={modalIsOpen} onRequestClose={closeModal} className="modal" overlayClassName="overlay">
-                <h3>{selectedDate}</h3>
-                {getShiftsForDate(selectedDate).length > 0 ? (
-                    <ul>
-                        {getShiftsForDate(selectedDate).map((shift, i) => (
-                            <li key={i}>{shift.title}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No shifts on this day.</p>
-                )}
-                <button onClick={closeModal}>Close</button>
-            </Modal>
+            {modalOpen && (
+                <div className="modal show d-block" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">{selectedDate}</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={closeModal}
+                                ></button>
+                            </div>
+                            <div className="modal-body">
+                                {getShiftsForDate(selectedDate).length > 0 ? (
+                                    <ul>
+                                        {getShiftsForDate(selectedDate).map((shift, i) => (
+                                            <li key={i}>{shift.title}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No shifts on this day.</p>
+                                )}
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={closeModal}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -24,6 +24,20 @@ function Positions() {
     //     fetchData();
     // }, []);
 
+    useEffect(() => {
+        const token = localStorage.getItem("access_token");
+
+        const fetchData = async () => {
+            const resPositions = await fetch("http://localhost:5000/positions", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setPositions(await resPositions.json());
+        };
+
+        fetchData()
+    }, []);
+
     const handleAddPosition = async (formData) => {
         const token = localStorage.getItem("access_token");
         const res = await fetch("http://localhost:5000/addPosition", {

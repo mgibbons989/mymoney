@@ -7,13 +7,6 @@ function ShiftList() {
             <span className="shift-header">Shifts</span>
 
             <div className="card">
-
-                {/* <div className="shift-headers">
-                    <span>DAY</span>
-                    <span>HOURS</span>
-                    <span>WAGES</span>
-                </div> */}
-
                 <ul className="shift-list">
                     {/* LOOP THROUGH SHIFTS HERE */}
                     <li className="shift">

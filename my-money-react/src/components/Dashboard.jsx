@@ -15,7 +15,7 @@ function Dashboard() {
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 
-        fetch('http://localhost:5000//api/employee', {
+        fetch('http://localhost:5000/api/employee', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,6 +24,7 @@ function Dashboard() {
         })
             .then(res => res.json())
             .then(data => {
+                // console.log("Employee data:", data);
                 setName(data.first_name);
             })
             .catch(err => {

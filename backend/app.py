@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 import urllib.parse
+import re
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
@@ -53,7 +54,6 @@ class Timesheet(db.Model): #USED TO BE ClockInClockOut
     # if clock out exists, display clock in button and calculate the hours worked since clock in for the date
     hours_Worked = db.Column(db.Float, nullable=True)
 
-
 class Shifts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -80,22 +80,45 @@ def home():
     return jsonify({'message': 'Welcome to the Clock-In/Clock-Out API!'}), 200
 
 # validate email and password
-def valid_email():
-    pass
+def valid_email(email):
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if (re.match(regex,email)):
+        return True
+    return False
 
-def valid_password():
-    pass
+def valid_password(password):
+    if len(password) < 8:
+        return "Password must be at least 8 characters long."
+    
+    if not re.search(r'[A-Z]', password):
+        return "Password must contain at least one uppercase letter."
+    
+    if not re.search(r'[a-z]', password):
+        return "Password must contain at least one lowercase letter."
+    
+    if not re.search(r'\d', password):
+        return "Password must contain at least one digit."
+    
+    if not re.search(r'[!@#$%^&*(),.?\":{}|<>]', password):
+        return "Password must contain at least one special character."
+    
+    return True
 
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
     email = data['email']
     password = data['password']
+    position_name = data['position']
+    posit = Positions.query.filter_by(positionName=position_name).first()
 
     if not valid_email(email):
         return jsonify({"message": 'Invalid email address. Please try again.'}), 400
-    if not valid_password(password):
-        return jsonify({"message": 'Invalid password. Please try again.'}), 400
+    
+    pass_check = valid_password(password)
+    if pass_check != True:
+        return jsonify({"message": pass_check}), 400
+    
     existing_user = Employee.query.filter_by(email=email).first()
     if existing_user:
         return jsonify({"message": 'Email already registered. Please log in.'}), 409
@@ -106,7 +129,7 @@ def signup():
                     password_hash=hashed_password, 
                     first_name= data['fname'], 
                     last_name = data['lname'], 
-                    position = data['position'])
+                    position = posit)
 
     db.session.add(user)
     db.session.commit()
@@ -118,7 +141,7 @@ def login():
     user = Employee.query.filter_by(email=data['email']).first()
     
     if user and bcrypt.check_password_hash(user.password_hash, data['password']):
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify({'access_token': access_token, 'first_name': user.first_name}), 200
     
     return jsonify({'message': 'Invalid credentials. Please try again or signup'}), 401
@@ -126,9 +149,6 @@ def login():
 
 # *******************TO DO*************************
 
-@app.route('/logout')
-def logout():
-    pass
 
 #based on the chosen pay period, get pay from those dates and display them
 #OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
@@ -139,15 +159,15 @@ def getPayroll():
 
 
 # if no shifts have been assigned, display either "no shift available" or blank if we're using a calendar format
-@app.route('/getShifts')
+@app.route('/getShifts', methods = ['GET'])
 @jwt_required()
 def getSchedule():
-    employee_id = get_jwt_identity()
+    employee_id = int(get_jwt_identity())
     # today = db.func.date(db.func.now())
 
     shifts = (
         Shifts.query
-        .filter(employee_id == employee_id)
+        .filter(Shifts.employee_id == employee_id)
         .order_by(Shifts.date.asc())
         .all()
     )
@@ -168,6 +188,7 @@ def getSchedule():
         total_earned = round(hours_worked * wage, 2)
         
         shift_data.append({
+            "title": "Shift",
             "shift_date": shift.date.isoformat(),
             "start_time": shift.start_time.strftime("%H:%M"),
             "end_time": shift.end_time.strftime("%H:%M"),
@@ -178,10 +199,20 @@ def getSchedule():
     
 
     return jsonify(shift_data), 200
-    
-@app.route('/positions')
+
+# I need two methods for getting the positons list because i have two 
+# pages that require the list, but one is public and the other requires the token
+
+@app.route('/positions/public', methods=['GET'])
+def public_positions():
+    return get_positions()
+
+@app.route('/positions', methods=['GET'])
 @jwt_required()
-def positions():
+def private_positions():
+    return get_positions()
+
+def get_positions():
     curr_pos = Positions.query.all()
     pos_data = []
 
@@ -262,8 +293,8 @@ def displayEmployeeInfo(employee_id):
 @app.route('/api/employee', methods=['GET'])
 @jwt_required()
 def curr_employee_info():
-    employee_id = get_jwt_identity()  # or ID if you used ID instead
-    employee = Employee.query.filter_by(employee_id=employee_id).first()
+    employee_id = int(get_jwt_identity())
+    employee = Employee.query.filter_by(id=employee_id).first()
 
     if employee:
         return jsonify({
@@ -277,14 +308,14 @@ def curr_employee_info():
 @app.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = Employee.query.get(current_user_id)
     return jsonify({'message': f'Welcome, {user.first_name}'}), 200
 
 @app.route('/clock-in-status', methods = ['GET'])
 @jwt_required()
 def clock_status():
-    employee_id = get_jwt_identity()
+    employee_id = int(get_jwt_identity())
     today = db.func.date(db.func.now())
 
     time = Timesheet.query.filter_by(employee_id=employee_id, date=today).first()
@@ -297,7 +328,7 @@ def clock_status():
 @app.route('/clockin', methods=['POST'])
 @jwt_required()
 def clockin():
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     clockin_record = Timesheet(employee_id = current_user_id, 
                                date = db.func.date(db.func.now()), 
                                clock_in = db.func.time(db.func.now()))
@@ -310,7 +341,7 @@ def clockin():
 @app.route('/clockout', methods=['POST'])
 @jwt_required()
 def clockout():
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
 
     # NEED TO ADD EDGE CASE OF CLOCK OUT BEING THE NEXT DAY AND IF THERE ARE MULTIPLE CLOCK IN AND OUTS A DAY(split shift)
 

@@ -5,6 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        localStorage.removeItem('access_token');
+        navigate('/')
+    }
 
     return (
         <>
@@ -40,9 +45,9 @@ function Sidebar() {
                 </Link>
             </nav>
             <div className="side-footer">
-                <Link to="/">
-                    <button><span className="icon"><LogOut /></span>Logout</button>
-                </Link>
+                {/* <Link to="/"> */}
+                <button onClick={handleLogout}><span className="icon"><LogOut /></span>Logout</button>
+                {/* </Link> */}
             </div>
         </>
     )
