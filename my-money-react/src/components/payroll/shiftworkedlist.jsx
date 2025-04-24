@@ -2,26 +2,35 @@ import { useState, useEffect } from "react";
 
 
 function ShiftWorkedList() {
-    var start_date = "2025-01-01"; // change the value to come from our frontend form
-    var end_date = "2025-04-30";   // change the value to come from our frontend form
+    var start_date = null;
+    var end_date = null;
+    start_date = "2025-01-01"; // change the value to come from our frontend form
+    end_date = "2025-04-30";   // change the value to come from our frontend form
     const [shiftWorkedList, setShiftWorkedList] = useState([]);
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 
-        const fetchData = async () => {
-            if (start_date && end_date) {
+        if (start_date!==null && end_date!==null) {
+            const fetchData = async () => {
+
                 const resShiftWorkedList = await fetch("http://localhost:5000/getPayrolls?start=" + start_date + "&end=" + end_date, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-            } else {
+
+                setShiftWorkedList(await resShiftWorkedList.json());
+            };
+            fetchData();
+        } else {
+            const fetchData = async () => {
+
                 const resShiftWorkedList = await fetch("http://localhost:5000/getPayrolls", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-            }
-            setShiftWorkedList(await resShiftWorkedList.json());
-        };
 
-        fetchData();
+                setShiftWorkedList(await resShiftWorkedList.json());
+            };
+            fetchData();
+        }
     }, []);
 
     return (

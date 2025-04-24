@@ -169,17 +169,9 @@ def getPayroll():
     )
 
     if (start_date and end_date):
-        #start_date = datetime.strptime(start_date, '%Y%m%d')
-        #end_date = datetime.strptime(end_date, '%Y%m%d')
-        
-        #start_date = datetime.strptime("20250101", '%Y%m%d').date().strftime("")
-        #end_date = datetime.strptime("20250501", '%Y%m%d').date()
-        app.logger.info(start_date)
-        app.logger.info(end_date)
-
         shiftsWorked = (
             Timesheet.query
-            .filter(Timesheet.employee_id == employee_id).filter(Timesheet.date.between('2025-01-01', '2025-05-01'))
+            .filter(Timesheet.employee_id == employee_id).filter(Timesheet.date.between(start_date, end_date))
             .order_by(Timesheet.date.asc())
             .all()
         )
