@@ -8,7 +8,7 @@ function CurrentPayPeriod() {
     useEffect(() => {
         const getShifts = async () => {
             const token = localStorage.getItem("access_token");
-            const res = await fetch("http://localhost:5000/getShifts", {
+            const res = await fetch("http://localhost:5000/getPayrolls", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
