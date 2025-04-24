@@ -1,0 +1,38 @@
+.emp-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+}
+
+.emp-main {
+    width: 100%;
+    padding: 1rem 1rem 0 1rem;
+}
+
+.employee {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+}
+
+.employee:hover {
+    background-color: rgb(255, 242, 222);
+}
+
+.emp-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.emp-list a {
+    text-decoration: none;
+    color: var(--text-color)
+}
+
+.emp-list a:hover {
+    text-decoration: underline;
+    color: blue;
+}
