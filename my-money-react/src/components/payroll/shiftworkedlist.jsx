@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 
 function ShiftWorkedList() {
-    var start_date = "20250101"; // change the value to come from our frontend form
-    var end_date = "20250430";   // change the value to come from our frontend form
+    var start_date = "2025-01-01"; // change the value to come from our frontend form
+    var end_date = "2025-04-30";   // change the value to come from our frontend form
     const [shiftWorkedList, setShiftWorkedList] = useState([]);
     useEffect(() => {
         const token = localStorage.getItem("access_token");

@@ -157,7 +157,7 @@ def login():
 @jwt_required()
 def getPayroll():
 
-    # take parameters: /getPayrolls?start=YYYYMMDD&end=YYYYMMDD
+    # take parameters: /getPayrolls?start=YYYY-MM-DD&end=YYYY-MM-DD
     start_date  = request.args.get('start', None) # None if no argument
     end_date  = request.args.get('end', None)
 
@@ -169,13 +169,17 @@ def getPayroll():
     )
 
     if (start_date and end_date):
-        start_date = datetime.strptime(start_date, '%Y%m%d')
-        end_date = datetime.strptime(end_date, '%Y%m%d')
+        #start_date = datetime.strptime(start_date, '%Y%m%d')
+        #end_date = datetime.strptime(end_date, '%Y%m%d')
+        
+        #start_date = datetime.strptime("20250101", '%Y%m%d').date().strftime("")
+        #end_date = datetime.strptime("20250501", '%Y%m%d').date()
+        app.logger.info(start_date)
+        app.logger.info(end_date)
+
         shiftsWorked = (
             Timesheet.query
-            .filter(Timesheet.employee_id == employee_id)
-            .filter(Timesheet.date >= start_date)
-            .filter(Timesheet.date <= end_date)
+            .filter(Timesheet.employee_id == employee_id).filter(Timesheet.date.between('2025-01-01', '2025-05-01'))
             .order_by(Timesheet.date.asc())
             .all()
         )
