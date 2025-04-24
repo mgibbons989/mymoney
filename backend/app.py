@@ -372,7 +372,7 @@ def assign_shift():
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
-    new_shift = Shifts(date = date, start_time=start_time, end_time=end_time, employee_id=employee.id)
+    new_shift = Shifts(shift_date = date, start_time=start_time, end_time=end_time, employee_id=employee.id)
     db.session.add(new_shift)
     db.session.commit()
     return jsonify({"message": "Shift assigned successfully!"}), 201
