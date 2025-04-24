@@ -286,6 +286,29 @@ def getEmployees():
     
     return jsonify(emp_data), 200
 
+# fetch only the employees and no managers
+@app.route('/employeesOnly')
+@jwt_required()
+def getEmployeesOnly():
+    curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs==0).all()  # 0 for employees, 1 for managers
+    emp_data = []
+
+    for emp in curr_emps:
+        fname = emp.first_name
+        lname = emp.last_name
+        email = emp.email
+        position = emp.position.positionName
+
+        emp_data.append({
+            "id" : emp.id,
+            "fname": fname,
+            "lname": lname,
+            "email" : email,
+            "position": position,
+        })
+    
+    return jsonify(emp_data), 200
+
 # display employee information for manager
 @app.route('/info/<int:employee_id>', methods = ['GET'])
 @jwt_required()
@@ -348,7 +371,7 @@ def clockout():
 
     # NEED TO ADD EDGE CASE OF CLOCK OUT BEING THE NEXT DAY AND IF THERE ARE MULTIPLE CLOCK IN AND OUTS A DAY(split shift)
 
-    clockin_record = Timesheet.query.filter_by(user_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
+    clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
     
     if clockin_record:
         clockin_record.clock_out = db.func.time(db.func.now())
