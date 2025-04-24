@@ -5,6 +5,7 @@ import Dashboard from "./components/Dashboard";
 import Schedule from "./components/Schedule";
 import Payroll from "./components/Payroll";
 import Employees from "./components/Employees";
+import Management from "./components/Admin";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,11 @@ const router = createBrowserRouter([
   {
     path: "/employees",
     element: <Employees />,
+    errorElement: <div>404 Not Found</div>
+  },
+  {
+    path: "/adminpage",
+    element: <Management />,
     errorElement: <div>404 Not Found</div>
   },
   {

@@ -10,11 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/bootstrap5": "^6.1.17",
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/react": "^6.1.17",
     "axios": "^1.7.9",
+    "bootstrap": "^5.3.5",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.501.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-modal": "^3.16.3",
     "react-router-dom": "^7.5.0"
   },
   "devDependencies": {
