@@ -13,7 +13,7 @@ function CurrentPayPeriod() {
             });
             const data = await res.json();
 
-            const past = data.filter(shift => new Date(shift.date) < new Date())
+            const past = data.filter(shift => new Date(shift.shift_date) < new Date())
                 .sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
 
             setShifts(past);
@@ -44,7 +44,7 @@ function CurrentPayPeriod() {
                         ) : (
                             shifts.map((shift, index) => (
                                 <li className="shift" key={index}>
-                                    <div>{shift.date} ({shift.hours} hrs)</div>
+                                    <div>{shift.shift_date.slice(0,10)} ({shift.hours} hrs)</div>
                                     <div>${shift.total_earned}</div>
                                 </li>
                             ))
