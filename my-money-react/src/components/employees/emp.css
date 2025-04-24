@@ -1,3 +1,19 @@
+.empShifts {
+    margin-top: 1.2rem;
+}
+
+.empShifts h5 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.sh {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 0.7rem;
+}
+
 .emp-content {
     display: flex;
     width: 100%;
@@ -10,29 +26,168 @@
     padding: 1rem 1rem 0 1rem;
 }
 
-.employee {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #eee;
-    font-size: 1.1rem;
-}
-
 .employee:hover {
     background-color: rgb(255, 242, 222);
-}
+    cursor: pointer;
 
-.emp-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.emp-list a {
-    text-decoration: none;
-    color: var(--text-color)
-}
-
-.emp-list a:hover {
     text-decoration: underline;
     color: blue;
+}
+
+.emp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.emp-table th,
+.emp-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.emp-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 1001;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-content table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+}
+
+.modal-content th,
+.modal-content td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.tptitle {
+    padding-right: 2px;
+    font-weight: 600;
+}
+
+.tp {
+    /* display: flex; */
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.tpdrop {
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.empShifts table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.empShifts thead th {
+    background-color: #f0f0f0;
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #ccc;
+}
+
+.empShifts tbody td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+}
+
+.empShifts tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.empShifts button {
+    cursor: pointer;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+    margin-right: 0.25rem;
+}
+
+.empShifts button:hover {
+    background-color: #0056b3;
+}
+
+.empShifts button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.empShifts form div {
+    margin-bottom: 0.75rem;
+}
+
+.empShifts form label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.empShifts form input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.empShifts form button {
+    margin-top: 0.5rem;
+}
+
+.empShifts form button+button {
+    margin-left: 0.5rem;
+    background-color: #6c757d;
+}
+
+.empShifts form button+button:hover {
+    background-color: #545b62;
 }

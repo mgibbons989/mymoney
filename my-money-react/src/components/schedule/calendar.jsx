@@ -3,6 +3,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import interactionPlugin from '@fullcalendar/interaction';
+import { format, parse, parseISO } from 'date-fns';
+
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fullcalendar/bootstrap5'; // applies Bootstrap theme
@@ -12,8 +14,7 @@ import './sched.css'
 const Calendar = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
-    // TO DOOOOOOOOOOOOOOOOOO
-    // GET SHIFTS FROM THE SHIFTS TABLE INSTEAD OF HARD CODING HERE
+
     const [shifts, setShifts] = useState([]);
 
     useEffect(() => {
@@ -21,6 +22,7 @@ const Calendar = () => {
             try {
                 const token = localStorage.getItem("access_token");
                 const res = await fetch("http://localhost:5000/getShifts", {
+                    method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
@@ -30,9 +32,17 @@ const Calendar = () => {
                 if (!res.ok) {
                     throw new Error("Failed to fetch shifts");
                 }
+
                 const data = await res.json();
 
-                setShifts(data);
+                const formatShifts = data.map(shift => ({
+                    title: shift.title,
+                    start: `${shift.shift_date}T${shift.start_time}`,
+                    end: `${shift.shift_date}T${shift.end_time}`,
+                    allDay: false
+                }))
+
+                setShifts(formatShifts);
             } catch (err) {
                 console.error("Error getting shifts", err)
             }
@@ -54,7 +64,7 @@ const Calendar = () => {
     };
 
     const getShiftsForDate = (dateStr) => {
-        return shifts.filter(shift => shift.shift_date === dateStr);
+        return shifts.filter(shift => shift.start.startsWith(dateStr));
     };
 
     return (
@@ -85,7 +95,11 @@ const Calendar = () => {
                                 {getShiftsForDate(selectedDate).length > 0 ? (
                                     <ul>
                                         {getShiftsForDate(selectedDate).map((shift, i) => (
-                                            <li key={i}>{shift.title}</li>
+                                            <li key={i}>
+                                                {shift.title}/<br />
+                                                {shift.start}/<br />
+                                                {shift.end}
+                                            </li>
                                         ))}
                                     </ul>
                                 ) : (

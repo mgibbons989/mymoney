@@ -5,25 +5,6 @@ import AddPosition from "./addPosModal";
 function Positions() {
     const [modalOpen, setModalOpen] = useState(false);
     const [positions, setPositions] = useState([]);
-    // const [user, setUser] = useState({privs:false})
-
-    // useEffect(() => {
-    //     const token = localStorage.getItem("access_token");
-
-    //     const fetchData = async () => {
-    //         // const resUser = await fetch("http://localhost:5000/currentUser", {
-    //         //     headers: { Authorization: `Bearer ${token}` },
-    //         // });
-    //         // const userData = await resUser.json();
-    //         // setUser(userData);
-
-    //         const resPositions = await fetch("http://localhost:5000/positions");
-    //         setPositions(await resPositions.json());
-    //     };
-
-    //     fetchData();
-    // }, []);
-
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 

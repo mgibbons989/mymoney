@@ -1,9 +1,12 @@
 import './emp.css';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
+import EmployeeModal from './empInfoModal';
 
 function EmployeeList() {
     const [employeeList, setEmployeeList] = useState([]);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 
@@ -19,20 +22,32 @@ function EmployeeList() {
 
     return (
         <>
+
             <div className="card">
-                <ul className="emp-list">
-                    {employeeList.length === 0 ? (
-                        <li>No Employees</li>
-                    ) : (
-                        employeeList.map(emp => (
-                            <Link to='/info/'>
-                                <li key={emp.id} className="empName">
-                                    <span>{emp.id}: {emp.fname} {emp.lname}</span>
-                                </li>
-                            </Link>
-                        ))
-                    )}
-                </ul>
+                <table className="emp-table">
+                    <thead>
+                        <tr><th>Name</th><th>ID Number</th></tr>
+                    </thead>
+                    <tbody>
+                        {employeeList.length === 0 ? (
+                            <tr><td colSpan={2}>No Employees</td></tr>
+                        ) : (
+                            employeeList.map(emp => (
+                                <tr key={emp.id} className='employee' onClick={() => setSelectedEmployee(emp)}>
+                                    <td className="empName">{emp.fname} {emp.lname}</td>
+                                    <td>{emp.id}</td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+
+                {selectedEmployee && (
+                    <EmployeeModal
+                        employee={selectedEmployee}
+                        onClose={() => setSelectedEmployee(null)}
+                    />
+                )}
             </div>
         </>
     );

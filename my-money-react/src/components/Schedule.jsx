@@ -21,6 +21,7 @@ function Schedule() {
 
                     <div className="sched-main">
                         <h2>Schedule</h2>
+                        <small>Select a date to display shift information.</small>
 
                         <div className="cal">
                             <Calendar />

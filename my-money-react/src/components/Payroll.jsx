@@ -2,7 +2,7 @@ import { useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
 import Sidebar from "./Sidebar";
-import DropDown from "./payroll/dropdown";
+import PayPeriod from "./payroll/dropdown";
 import ShiftWorkedList from "./payroll/shiftworkedlist";
 import "./payroll/pay.css"
 
@@ -23,7 +23,7 @@ function Payroll() {
                         <h2>Payroll Earnings</h2>
 
                         <div className="pay-period-select">
-                            <DropDown />
+                            <PayPeriod />
                         </div>
 
                         <div className="shifts">
