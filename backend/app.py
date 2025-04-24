@@ -156,6 +156,11 @@ def login():
 @app.route('/getPayrolls', methods = ['GET'])
 @jwt_required()
 def getPayroll():
+
+    # take parameters: /getPayrolls?start=YYYYMMDD&end=YYYYMMDD
+    start_date  = request.args.get('start', None) # None if no argument
+    end_date  = request.args.get('end', None)
+
     employee_id = int(get_jwt_identity())
 
     wage = (db.session.query(Positions.hourly_wage)
@@ -163,12 +168,24 @@ def getPayroll():
             .filter(Employee.id == employee_id).scalar()
     )
 
-    shiftsWorked = (
-        Timesheet.query
-        .filter(Timesheet.employee_id == employee_id)
-        .order_by(Timesheet.date.asc())
-        .all()
-    )
+    if (start_date and end_date):
+        start_date = datetime.strptime(start_date, '%Y%m%d')
+        end_date = datetime.strptime(end_date, '%Y%m%d')
+        shiftsWorked = (
+            Timesheet.query
+            .filter(Timesheet.employee_id == employee_id)
+            .filter(Timesheet.date >= start_date)
+            .filter(Timesheet.date <= end_date)
+            .order_by(Timesheet.date.asc())
+            .all()
+        )
+    else:
+        shiftsWorked = (
+            Timesheet.query
+            .filter(Timesheet.employee_id == employee_id)
+            .order_by(Timesheet.date.asc())
+            .all()
+        )
 
     shiftWorked_data = []
 

@@ -7,6 +7,7 @@ function PayPeriod() {
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [payPeriods, setPayPeriods] = useState([]);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [shiftWorkedList, setShiftWorkedList] = useState([]);
 
     useEffect(() => {
         if (year && month) {
