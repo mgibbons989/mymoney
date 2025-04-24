@@ -154,10 +154,47 @@ def login():
 
 #based on the chosen pay period, get pay from those dates and display them
 #OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
-@app.route('/getPayroll', methods = ['GET', 'POST'])
+@app.route('/getPayrolls', methods = ['GET'])
 @jwt_required()
 def getPayroll():
-    pass
+    employee_id = int(get_jwt_identity())
+
+    wage = (db.session.query(Positions.hourly_wage)
+            .join(Employee, Employee.position_id == Positions.id)
+            .filter(Employee.id == employee_id).scalar()
+    )
+
+    shiftsWorked = (
+        Timesheet.query
+        .filter(Timesheet.employee_id == employee_id)
+        .order_by(Timesheet.date.asc())
+        .all()
+    )
+
+    shiftWorked_data = []
+
+    for shift in shiftsWorked:
+
+        #clock_in = datetime.combine(shift.date, shift.clock_in)
+        #clock_out = datetime.combine(shift.date, shift.clock_out)
+
+        duration = shift.clock_out - shift.clock_in
+
+        hours_worked = duration.total_seconds() / 3600
+
+        total_earned = round(hours_worked * wage, 2)
+        
+        shiftWorked_data.append({
+            "title": "Payroll",
+            "shift_date": shift.date.isoformat(),
+            "start_time": shift.clock_in.strftime("%H:%M"),
+            "end_time": shift.clock_out.strftime("%H:%M"),
+            "hours": round(hours_worked, 2),
+            "wage_per_hour": wage,
+            "total_earned": total_earned,
+        })
+    
+    return jsonify(shiftWorked_data), 200
 
 
 # if no shifts have been assigned, display either "no shift available" or blank if we're using a calendar format
@@ -286,6 +323,29 @@ def getEmployees():
     
     return jsonify(emp_data), 200
 
+# fetch only the employees and no managers
+@app.route('/employeesOnly')
+@jwt_required()
+def getEmployeesOnly():
+    curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs==0).all()  # 0 for employees, 1 for managers
+    emp_data = []
+
+    for emp in curr_emps:
+        fname = emp.first_name
+        lname = emp.last_name
+        email = emp.email
+        position = emp.position.positionName
+
+        emp_data.append({
+            "id" : emp.id,
+            "fname": fname,
+            "lname": lname,
+            "email" : email,
+            "position": position,
+        })
+    
+    return jsonify(emp_data), 200
+
 # display employee information for manager
 @app.route('/info/<int:employee_id>', methods = ['GET'])
 @jwt_required()
@@ -348,7 +408,7 @@ def clockout():
 
     # NEED TO ADD EDGE CASE OF CLOCK OUT BEING THE NEXT DAY AND IF THERE ARE MULTIPLE CLOCK IN AND OUTS A DAY(split shift)
 
-    clockin_record = Timesheet.query.filter_by(user_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
+    clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
     
     if clockin_record:
         clockin_record.clock_out = db.func.time(db.func.now())

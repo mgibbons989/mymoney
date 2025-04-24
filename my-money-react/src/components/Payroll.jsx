@@ -3,7 +3,7 @@ import Header from "./header";
 import Footer from "./footer";
 import Sidebar from "./Sidebar";
 import DropDown from "./payroll/dropdown";
-import ShiftList from "./payroll/shiftlist";
+import ShiftWorkedList from "./payroll/shiftworkedlist";
 import "./payroll/pay.css"
 
 function Payroll() {
@@ -27,7 +27,7 @@ function Payroll() {
                         </div>
 
                         <div className="shifts">
-                            <ShiftList />
+                            <ShiftWorkedList />
                         </div>
 
                     </div>
