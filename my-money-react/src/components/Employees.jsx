@@ -20,6 +20,7 @@ function Employees() {
 
                     <div className="emp-main">
                         <h2>Employees</h2>
+                        <small>Click on an employee name to display their information.</small>
                         <EmployeeList />
                     </div>
 

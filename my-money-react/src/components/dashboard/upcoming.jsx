@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { format, parse } from 'date-fns';
+
 
 function UpcomingShifts() {
 
@@ -9,10 +11,11 @@ function UpcomingShifts() {
         const getShifts = async () => {
             const token = localStorage.getItem("access_token");
             const res = await fetch("http://localhost:5000/getShifts", {
+                method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
-            const upcoming = data.filter(shift => new Date(shift.date) >= new Date()).slice(0, 3);
+            const upcoming = data.filter(shift => new Date(shift.shift_date) >= new Date()).slice(0, 3);
 
             setShifts(upcoming);
 
@@ -41,7 +44,7 @@ function UpcomingShifts() {
                             (
                                 shifts.map((shift, index) => (
                                     <li className="shift" key={index}>
-                                        <div>{shift.shift_date}({shift.hours} hrs)</div>
+                                        <div>{format(new Date(shift.shift_date), 'MMM dd, yyyy')}({shift.hours} hrs)</div>
                                         <div>${shift.total_earned}</div>
                                     </li>
                                 ))

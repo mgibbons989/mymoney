@@ -17,12 +17,18 @@
     font-weight: 450;
 }
 
+.paydate label {
+    margin-right: 12px;
+}
+
 .dropdown-select {
-    width: 100%;
+    width: 50%;
     padding: 0.5rem;
     border: 1.5px solid gray;
     border-radius: 4px;
     font-size: 0.85rem;
+
+    cursor: pointer;
 }
 
 .dropdown-select option {
@@ -35,6 +41,43 @@
 
 .pay-period-select {
     margin-bottom: 2rem;
+    width: 100%;
+}
+
+.pay-period-select {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    /* width: 300px; */
+    /* text-align: center; */
+    font-size: 16px;
+    margin-bottom: 2rem;
+}
+
+.payPeriodCont {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+
+    align-items: center;
+}
+
+.payPeriodCont input[type="number"],
+.dropdown-select {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 30%;
+}
+
+.payPeriodCont input[type="number"]:focus,
+.dropdown-select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
 }
 
 .shift-header {

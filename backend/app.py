@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -151,7 +151,6 @@ def login():
 
 # *******************TO DO*************************
 
-
 #based on the chosen pay period, get pay from those dates and display them
 #OPTIONAL: make a filter so that the user can go from least to greatest or over a certain number
 @app.route('/getPayrolls', methods = ['GET'])
@@ -215,8 +214,8 @@ def getSchedule():
 
     for shift in shifts:
 
-        shift_start = datetime.combine(shift.shift_date, shift.start_time)
-        shift_end = datetime.combine(shift.shift_date, shift.end_time)
+        shift_start = shift.start_time
+        shift_end = shift.end_time
 
         duration = shift_end - shift_start
 
@@ -227,17 +226,19 @@ def getSchedule():
         total_earned = round(hours_worked * wage, 2)
         
         shift_data.append({
+            "shift_id": shift.id,
             "title": "Shift",
             "shift_date": shift.date.isoformat(),
             "start_time": shift.start_time.strftime("%H:%M"),
             "end_time": shift.end_time.strftime("%H:%M"),
             "hours": round(hours_worked, 2),
-            "wage_per_hour": wage,
+            "wage_per_hour": round(wage, 2),
             "total_earned": total_earned,
         })
     
 
     return jsonify(shift_data), 200
+
 
 # I need two methods for getting the positons list because i have two 
 # pages that require the list, but one is public and the other requires the token
@@ -346,11 +347,51 @@ def getEmployeesOnly():
     
     return jsonify(emp_data), 200
 
-# display employee information for manager
-@app.route('/info/<int:employee_id>', methods = ['GET'])
+@app.route('/getEmployeeShifts/<int:employee_id>', methods = ['GET'])
 @jwt_required()
-def displayEmployeeInfo(employee_id):
-    pass
+def getEmpShifts(employee_id):
+    time = request.args.get('period', 'week')
+    today = datetime.today().date()
+
+    allShifts = Shifts.query.filter_by(employee_id=employee_id)
+
+    if time == 'week':
+        start_week = today - timedelta(days=today.weekday())
+        end_week = start_week + timedelta(days=6)
+        allShifts = allShifts.filter(Shifts.date > start_week, Shifts.date <= end_week)
+    elif time == 'month':
+        start_month = today.replace(day =1)
+        if today.month == 12:
+            end_month = today.replace(year = today.year + 1, month = 1, day = 1) - timedelta(days = 1)
+            # if its decemeber then the end of the month is the next year - 1 day
+        else:
+            end_month = today.replace(month=today.month + 1, day=1) - timedelta(days=1)
+        
+        allShifts = allShifts.filter(Shifts.date > start_month, Shifts.date <= end_month)
+
+    
+    reshifts = allShifts.order_by(Shifts.date.asc()).all()
+    shift_data = []
+    for shift in reshifts:
+        shift_start = shift.start_time
+        shift_end = shift.end_time
+        duration = shift_end - shift_start
+        hours_worked = duration.total_seconds() / 3600
+        wage = shift.employee.position.hourly_wage
+        total_earned = round(hours_worked * wage, 2)
+
+        shift_data.append({
+            "id": shift.id,
+            "title": "Shift",
+            "date": shift.date.isoformat(),
+            "start_time": shift.start_time.strftime("%H:%M"),
+            "end_time": shift.end_time.strftime("%H:%M"),
+            "hours": round(hours_worked, 2),
+            "wage_per_hour": wage,
+            "total_earned": total_earned,
+        })
+
+    return jsonify(shift_data), 200
 
 @app.route('/api/employee', methods=['GET'])
 @jwt_required()
@@ -424,18 +465,34 @@ def assign_shift():
     data = request.get_json()
     employee_id = data['employee_id']
     date = data['date']
-    start_time = data['start_time']
-    end_time = data['end_time']
+    start_time_str = data["start_time"]
+    end_time_str = data["end_time"]
+    
+    try:
+        start_time = datetime.strptime(f"{date} {start_time_str}", "%Y-%m-%d %H:%M")
+        end_time = datetime.strptime(f"{date} {end_time_str}", "%Y-%m-%d %H:%M")
+    except ValueError:
+        return jsonify({"message" :"Incorrect format"})
+    
 
-    employee = Employee.query.get(employee_id)
+    if not all([employee_id, date, start_time, end_time]):
+        return jsonify({"message": "Missing required fields"}), 400
 
+
+    employee = Employee.query.filterby(id=employee_id).first()
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
     new_shift = Shifts(date = date, start_time=start_time, end_time=end_time, employee_id=employee.id)
     db.session.add(new_shift)
     db.session.commit()
-    return jsonify({"message": "Shift assigned successfully!"}), 201
+
+    return jsonify({
+        "id": new_shift.id,
+        "date": date,
+        "start_time": start_time,
+        "end_time": end_time
+    }), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
