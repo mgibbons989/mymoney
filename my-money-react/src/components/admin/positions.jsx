@@ -55,11 +55,6 @@ function Positions() {
                                             <span>Granted Privileges? {pos.privs ? "Yes" : "No"}</span>
                                         </div>
 
-                                        <div className="posChange">
-                                            <button className="edit">Edit</button>
-                                            <button className="delete">Delete</button>
-                                        </div>
-
                                     </li>
                                 ))
                             )}

@@ -8,6 +8,7 @@ function EmployeeModal({ employee, onClose }) {
 
     const [shifts, setShifts] = useState([]);
     const [filter, setFilter] = useState("week");
+    const [editShift, setEditShift] = useState(null);
 
     useEffect(() => {
         const fetchShifts = async () => {
@@ -32,6 +33,7 @@ function EmployeeModal({ employee, onClose }) {
         end_time: ""
     });
 
+
     const handleAddShift = async (newShift) => {
         const token = localStorage.getItem("access_token")
         const res = await fetch("http://localhost:5000/assign_shift", {
@@ -54,6 +56,63 @@ function EmployeeModal({ employee, onClose }) {
             alert(errorData.message || "Failed to add shift.");
         }
     };
+    const [editingShift, setEditingShift] = useState(null);
+
+    const handleEditShift = (shift) => {
+
+        setEditingShift({
+            ...shift,
+            date: format(new Date(shift.date), 'yyyy-MM-dd'),
+        });
+
+    };
+
+    const handleUpdateShift = async () => {
+        if (!editingShift) return;
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`http://localhost:5000/edit_shift/${editingShift.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                date: editingShift.date,
+                start_time: editingShift.start_time,
+                end_time: editingShift.end_time
+            }),
+        });
+
+        if (res.ok) {
+            const updatedShift = await res.json();
+            setShifts((prev) =>
+                prev.map((shift) =>
+                    shift.id === updatedShift.id ? updatedShift : shift
+                )
+            );
+            setEditingShift(null);
+            setNewShift({ date: "", start_time: "", end_time: "" });
+        } else {
+            const errorData = await res.json();
+            alert(errorData.message || "Failed to update shift.");
+        }
+    };
+
+    const handleDeleteShift = async (shiftId) => {
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`http://localhost:5000/delete_shift/${shiftId}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+            setShifts((prevShifts) => prevShifts.filter((shift) => shift.id !== shiftId));
+        } else {
+            const errorData = await res.json();
+            alert(errorData.message || "Failed to delete shift.");
+        }
+    };
+
 
     const isValidShift = newShift.date && newShift.start_time && newShift.end_time;
 
@@ -103,8 +162,8 @@ function EmployeeModal({ employee, onClose }) {
                                                 <td>{format(parse(shift.end_time, 'HH:mm', new Date()), 'h:mmaaa')}</td>
                                                 <td>{shift.hours}</td>
                                                 <td>
-                                                    <button><Pencil size={16} /></button>
-                                                    <button><Trash2 size={16} /></button>
+                                                    <button onClick={() => handleEditShift(shift)}><Pencil size={16} /></button>
+                                                    <button onClick={() => handleDeleteShift(shift.id)}><Trash2 size={16} /></button>
                                                 </td>
                                             </tr>
                                         ))
@@ -153,6 +212,44 @@ function EmployeeModal({ employee, onClose }) {
                             </form>
                         )}
                     </div>
+
+                    {editingShift && (
+                        <div className="edit-shift-form">
+                            <form onSubmit={(e) => { e.preventDefault(); handleUpdateShift(); }}>
+                                <div>
+                                    <label>Date</label>
+                                    <input
+                                        type="date"
+                                        value={editingShift.date}
+                                        onChange={e => setEditingShift({ ...editingShift, date: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label>Start Time</label>
+                                    <input
+                                        type="time"
+                                        value={editingShift.start_time}
+                                        onChange={e => setEditingShift({ ...editingShift, start_time: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label>End Time</label>
+                                    <input
+                                        type="time"
+                                        value={editingShift.end_time}
+                                        onChange={e => setEditingShift({ ...editingShift, end_time: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <button type="submit">Save Changes</button>
+                                    <button onClick={() => setEditingShift(null)}>Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
 
                 </div>
             </div>

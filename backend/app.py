@@ -393,6 +393,51 @@ def getEmpShifts(employee_id):
 
     return jsonify(shift_data), 200
 
+@app.route('/edit_shift/<int:shift_id>', methods = ['PUT'])
+@jwt_required()
+def editShift(shift_id):
+    shift = Shifts.query.filter_by(id=shift_id).first()
+    data = request.get_json()
+    
+    date_str = data.get('date')
+    start_time_str = data.get('start_time')
+    end_time_str = data.get('end_time')
+
+    if not date_str or not start_time_str or not end_time_str:
+        return jsonify({"message": "Missing required fields"}), 400
+    
+    try:
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        start = datetime.strptime(f"{date_str} {start_time_str}", '%Y-%m-%d %H:%M')
+        end = datetime.strptime(f"{date_str} {end_time_str}", '%Y-%m-%d %H:%M')
+        hours = (end - start).seconds / 3600
+
+        shift.date = date
+        shift.start_time = start
+        shift.end_time = end
+        shift.hours = hours
+
+        db.session.commit()
+
+        return jsonify({
+            "id": shift.id,
+            "date": shift.date.isoformat(),
+            "start_time": shift.start_time.strftime('%H:%M'),
+            "end_time": shift.end_time.strftime('%H:%M'),
+            "employee_id": shift.employee_id
+        }), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+@app.route('/delete_shift/<int:shift_id>')
+@jwt_required()
+def delShift(shift_id):
+    shift = Shifts.query.filter_by(id=shift_id)
+    db.session.delete(shift)
+    db.session.commit()
+    
+    return jsonify({"message": "Shift deleted successfully"}), 200
+
 @app.route('/api/employee', methods=['GET'])
 @jwt_required()
 def curr_employee_info():
@@ -447,9 +492,7 @@ def clockin():
 def clockout():
     current_user_id = int(get_jwt_identity())
 
-    # NEED TO ADD EDGE CASE OF CLOCK OUT BEING THE NEXT DAY AND IF THERE ARE MULTIPLE CLOCK IN AND OUTS A DAY(split shift)
-
-    clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
+    clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, clock_out=None).order_by(Timesheet.id.desc()).first()
     
     if clockin_record:
         clockin_record.clock_out = db.func.time(db.func.now())

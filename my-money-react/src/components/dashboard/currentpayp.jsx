@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { format, parse } from 'date-fns';
+
 
 function CurrentPayPeriod() {
 
@@ -44,7 +46,7 @@ function CurrentPayPeriod() {
                         ) : (
                             shifts.map((shift, index) => (
                                 <li className="shift" key={index}>
-                                    <div>{shift.shift_date.slice(0,10)} ({shift.hours} hrs)</div>
+                                    <div>{format(new Date(shift.shift_date), 'MMMM d, yyyy')} ({shift.hours} hrs)</div>
                                     <div>${shift.total_earned}</div>
                                 </li>
                             ))
