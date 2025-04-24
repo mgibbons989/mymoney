@@ -358,7 +358,7 @@ def getEmpShifts(employee_id):
     if time == 'week':
         start_week = today - timedelta(days=today.weekday())
         end_week = start_week + timedelta(days=6)
-        allShifts = allShifts.filter(Shifts.date > start_week, Shifts.date <= end_week)
+        allShifts = allShifts.filter(Shifts.date >= start_week, Shifts.date <= end_week)
     elif time == 'month':
         start_month = today.replace(day =1)
         if today.month == 12:
@@ -479,7 +479,7 @@ def assign_shift():
         return jsonify({"message": "Missing required fields"}), 400
 
 
-    employee = Employee.query.filterby(id=employee_id).first()
+    employee = Employee.query.filter_by(id=employee_id).first()
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
