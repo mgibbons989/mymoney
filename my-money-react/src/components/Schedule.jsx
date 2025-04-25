@@ -13,13 +13,13 @@ function Schedule() {
 
             <div className="main-content">
 
-                <div className="sched-content">
+                <div className="content">
 
                     <aside className="sidebar">
                         <Sidebar />
                     </aside>
 
-                    <div className="sched-main">
+                    <div className="main">
                         <h2>Schedule</h2>
                         <small>Select a date to display shift information.</small>
 

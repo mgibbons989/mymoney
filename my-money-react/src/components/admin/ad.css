@@ -1,15 +1,3 @@
-.admincont {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex: 1;
-}
-
-.adminmain {
-    padding: 1rem 1rem 0 1rem;
-    width: 100%;
-}
-
 .admingr {
     display: flex;
     justify-content: space-around;

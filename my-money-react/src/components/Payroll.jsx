@@ -16,7 +16,7 @@ function Payroll() {
 
             <div className="main-content">
 
-                <div className="pay-content">
+                <div className="content">
 
                     <aside className="sidebar">
                         <Sidebar />

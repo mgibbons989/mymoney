@@ -12,13 +12,13 @@ function Employees() {
 
             <div className="main-content">
 
-                <div className="emp-content">
+                <div className="content">
 
                     <aside className="sidebar">
                         <Sidebar />
                     </aside>
 
-                    <div className="emp-main">
+                    <div className="main">
                         <h2>Employees</h2>
                         <small>Click on an employee name to display their information.</small>
                         <EmployeeList />
