@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import AddPosition from "./addPosModal";
 
-
 function Positions() {
     const [modalOpen, setModalOpen] = useState(false);
     const [positions, setPositions] = useState([]);
+
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 
@@ -16,7 +16,7 @@ function Positions() {
             setPositions(await resPositions.json());
         };
 
-        fetchData()
+        fetchData();
     }, []);
 
     const handleAddPosition = async (formData) => {
@@ -37,41 +37,41 @@ function Positions() {
     };
 
     return (
-        <>
-            <div className="pos-list">
-                <h3>Positions</h3>
+        <div className="pos-list">
+            <h3>Positions</h3>
 
-                <div >
-                    <ul className="positionlist">
-                        {positions.length === 0 ? (
-                            <li>No posiitions</li>
-                        ) :
-                            (
-                                positions.map(pos => (
-                                    <li key={pos.id} className="posNames">
-                                        <div className="pos-det">
-                                            <span className="posName">{pos.positionName}</span>
-                                            <span>Wage: ${pos.hourly_wage}/hr</span>
-                                            <span>Granted Privileges? {pos.privs ? "Yes" : "No"}</span>
-                                        </div>
+            {positions.length === 0 ? (
+                <p>No positions available.</p>
+            ) : (
+                <table className="positionlist">
+                    <thead>
+                        <tr>
+                            <th>Position Name</th>
+                            <th>Hourly Wage</th>
+                            <th>Granted Privileges?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {positions.map((pos) => (
+                            <tr key={pos.id}>
+                                <td className="posName">{pos.positionName}</td>
+                                <td>${pos.hourly_wage.toFixed(2)}/hr</td>
+                                <td>{pos.privs ? "Yes" : "No"}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
 
-                                    </li>
-                                ))
-                            )}
-                    </ul>
-                </div>
+            <button onClick={() => setModalOpen(true)} className="posAdd">Add Position</button>
 
-                <button onClick={() => setModalOpen(true)} className="posAdd">Add Position</button>
-
-                <AddPosition
-                    isOpen={modalOpen}
-                    onClose={() => setModalOpen(false)}
-                    onAdd={handleAddPosition}
-                />
-
-            </div>
-        </>
-    )
+            <AddPosition
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onAdd={handleAddPosition}
+            />
+        </div>
+    );
 }
 
 export default Positions;

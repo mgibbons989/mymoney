@@ -410,12 +410,10 @@ def editShift(shift_id):
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
         start = datetime.strptime(f"{date_str} {start_time_str}", '%Y-%m-%d %H:%M')
         end = datetime.strptime(f"{date_str} {end_time_str}", '%Y-%m-%d %H:%M')
-        hours = (end - start).seconds / 3600
 
         shift.date = date
         shift.start_time = start
         shift.end_time = end
-        shift.hours = hours
 
         db.session.commit()
 
@@ -429,10 +427,10 @@ def editShift(shift_id):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-@app.route('/delete_shift/<int:shift_id>')
+@app.route('/delete_shift/<int:shift_id>', methods = ["DELETE"])
 @jwt_required()
 def delShift(shift_id):
-    shift = Shifts.query.filter_by(id=shift_id)
+    shift = Shifts.query.filter_by(id=shift_id).first()
     db.session.delete(shift)
     db.session.commit()
     
@@ -530,11 +528,14 @@ def assign_shift():
     db.session.add(new_shift)
     db.session.commit()
 
+    hours_worked = (end_time - start_time).seconds / 3600
+
     return jsonify({
         "id": new_shift.id,
         "date": date,
-        "start_time": start_time,
-        "end_time": end_time
+        "start_time": start_time.strftime('%H:%M'),
+        "end_time": end_time.strftime('%H:%M'),
+        "hours": round(hours_worked, 2)
     }), 201
 
 if __name__ == '__main__':
