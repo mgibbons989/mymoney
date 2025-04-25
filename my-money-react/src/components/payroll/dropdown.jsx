@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { format, endOfMonth, isBefore, isAfter, startOfMonth } from 'date-fns';
 
-
-function PayPeriod() {
+function PayPeriod({ onSelect }) {
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [payPeriods, setPayPeriods] = useState([]);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedIndex, setSelectedIndex] = useState("");
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
 
     useEffect(() => {
         if (year && month) {
@@ -49,9 +53,13 @@ function PayPeriod() {
                         id="year"
                         name="year"
                         min="1900"
-                        max="2100"
+                        max={currentYear}
                         value={year}
-                        onChange={(e) => setYear(parseInt(e.target.value))}
+                        onChange={(e) => {
+                            const selectedYear = parseInt(e.target.value);
+                            if (selectedYear <= currentYear) setYear(selectedYear);
+                            if (selectedYear == currentYear) setMonth(currentMonth);
+                        }}
                         required
                     />
 
@@ -61,16 +69,37 @@ function PayPeriod() {
                         id="month"
                         name="month"
                         min="1"
-                        max="12"
+                        max={year === currentYear ? currentMonth : 12}
                         value={month}
-                        onChange={(e) => setMonth(parseInt(e.target.value))}
+                        onChange={(e) => {
+                            const selectedMonth = parseInt(e.target.value);
+                            if (year < currentYear || selectedMonth <= currentMonth) {
+                                setMonth(selectedMonth);
+                            }
+                        }}
                         required
                     />
                 </form>
                 <div className='paydate'>
                     <label>Date:</label>
 
-                    <select className="dropdown-select">
+                    <select
+                        className="dropdown-select"
+                        value={selectedIndex}
+                        onChange={(e) => {
+                            const idx = e.target.value
+                            setSelectedIndex(idx)
+
+                            const selected = payPeriods[idx];
+                            if (selected) {
+                                onSelect(selected.start, selected.end);
+                            }
+                            else {
+                                onSelect(null, null)
+                            }
+                        }}
+                    >
+                        <option value={""}>-- Choose Pay Period --</option>
                         {payPeriods.map((period, index) => (
                             <option key={index} value={index}>
                                 {period.label}
@@ -80,7 +109,7 @@ function PayPeriod() {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default PayPeriod;

@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { X, Pencil, Trash2 } from "lucide-react"
+import { useNavigate } from "react-router-dom";
 
 import { format, parse } from 'date-fns';
 
 
 function EmployeeModal({ employee, onClose }) {
+    const navigate = useNavigate();
 
     const [shifts, setShifts] = useState([]);
     const [filter, setFilter] = useState("week");
+    const [editShift, setEditShift] = useState(null);
 
     useEffect(() => {
         const fetchShifts = async () => {
@@ -20,6 +23,7 @@ function EmployeeModal({ employee, onClose }) {
             setShifts(data);
         };
 
+        console.log("Shifts rendering:", shifts);
         fetchShifts();
     }, [employee.id, filter]);
 
@@ -31,6 +35,7 @@ function EmployeeModal({ employee, onClose }) {
         start_time: "",
         end_time: ""
     });
+
 
     const handleAddShift = async (newShift) => {
         const token = localStorage.getItem("access_token")
@@ -45,15 +50,76 @@ function EmployeeModal({ employee, onClose }) {
 
         if (res.ok) {
             const addedShift = await res.json();
+
+            console.log("Added shift:", addedShift);
+
             setShifts((prev) => [...prev, addedShift]);
             setShowAddForm(false);
-            setNewShift({ date: "", start_time: "", end_time: "" });
+            setNewShift({ employee_id: employee.id, date: "", start_time: "", end_time: "" });
         }
         else {
             const errorData = await res.json();
             alert(errorData.message || "Failed to add shift.");
         }
     };
+
+    const [editingShift, setEditingShift] = useState(null);
+
+    const handleEditShift = (shift) => {
+
+        setEditingShift({
+            ...shift,
+            date: format(new Date(shift.date), 'yyyy-MM-dd'),
+        });
+
+    };
+
+    const handleUpdateShift = async () => {
+        if (!editingShift) return;
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`http://localhost:5000/edit_shift/${editingShift.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                date: editingShift.date,
+                start_time: editingShift.start_time,
+                end_time: editingShift.end_time
+            }),
+        });
+
+        if (res.ok) {
+            const updatedShift = await res.json();
+            setShifts((prev) =>
+                prev.map((shift) =>
+                    shift.id === updatedShift.id ? updatedShift : shift
+                )
+            );
+            setEditingShift(null);
+            setNewShift({ date: "", start_time: "", end_time: "" });
+        } else {
+            const errorData = await res.json();
+            alert(errorData.message || "Failed to update shift.");
+        }
+    };
+
+    const handleDeleteShift = async (shiftId) => {
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`http://localhost:5000/delete_shift/${shiftId}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+            setShifts((prevShifts) => prevShifts.filter((shift) => shift.id !== shiftId));
+        } else {
+            const errorData = await res.json();
+            alert(errorData.message || "Failed to delete shift.");
+        }
+    };
+
 
     const isValidShift = newShift.date && newShift.start_time && newShift.end_time;
 
@@ -96,18 +162,28 @@ function EmployeeModal({ employee, onClose }) {
                                             <td colSpan={5}>No shifts available.</td>
                                         </tr>
                                     ) : (
-                                        shifts.map((shift, i) => (
-                                            <tr key={i}>
-                                                <td>{format(new Date(shift.date), 'MMM dd, yyyy')}</td>
-                                                <td>{format(parse(shift.start_time, 'HH:mm', new Date()), 'h:mmaaa')}</td>
-                                                <td>{format(parse(shift.end_time, 'HH:mm', new Date()), 'h:mmaaa')}</td>
-                                                <td>{shift.hours}</td>
-                                                <td>
-                                                    <button><Pencil size={16} /></button>
-                                                    <button><Trash2 size={16} /></button>
-                                                </td>
-                                            </tr>
-                                        ))
+                                        shifts.map((shift, i) => {
+                                            let startFormatted = "Invalid";
+                                            let endFormatted = "Invalid";
+
+                                            try {
+                                                startFormatted = format(parse(shift.start_time, "HH:mm", new Date()), "h:mmaaa");
+                                                endFormatted = format(parse(shift.end_time, "HH:mm", new Date()), "h:mmaaa");
+                                            } catch (err) {
+                                                console.error("Invalid time format:", err);
+                                            }
+                                            return (
+                                                <tr key={i}>
+                                                    <td>{format(new Date(shift.date), 'MMM dd, yyyy')}</td>
+                                                    <td>{startFormatted}</td>
+                                                    <td>{endFormatted}</td>
+                                                    <td>{shift.hours}</td>
+                                                    <td>
+                                                        <button onClick={() => handleEditShift(shift)}><Pencil size={16} /></button>
+                                                        <button onClick={() => handleDeleteShift(shift.id)}><Trash2 size={16} /></button>
+                                                    </td>
+                                                </tr>)
+                                        })
                                     )}
                             </tbody>
                         </table>
@@ -153,6 +229,44 @@ function EmployeeModal({ employee, onClose }) {
                             </form>
                         )}
                     </div>
+
+                    {editingShift && (
+                        <div className="edit-shift-form">
+                            <form onSubmit={(e) => { e.preventDefault(); handleUpdateShift(); }}>
+                                <div>
+                                    <label>Date</label>
+                                    <input
+                                        type="date"
+                                        value={editingShift.date}
+                                        onChange={e => setEditingShift({ ...editingShift, date: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label>Start Time</label>
+                                    <input
+                                        type="time"
+                                        value={editingShift.start_time}
+                                        onChange={e => setEditingShift({ ...editingShift, start_time: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label>End Time</label>
+                                    <input
+                                        type="time"
+                                        value={editingShift.end_time}
+                                        onChange={e => setEditingShift({ ...editingShift, end_time: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <button type="submit">Save Changes</button>
+                                    <button onClick={() => setEditingShift(null)}>Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
 
                 </div>
             </div>

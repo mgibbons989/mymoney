@@ -3,7 +3,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import interactionPlugin from '@fullcalendar/interaction';
-import { format, parse, parseISO } from 'date-fns';
+import { format, parse } from 'date-fns';
+import { X } from "lucide-react";
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -36,11 +37,16 @@ const Calendar = () => {
                 const data = await res.json();
 
                 const formatShifts = data.map(shift => ({
-                    title: shift.title,
-                    start: `${shift.shift_date}T${shift.start_time}`,
-                    end: `${shift.shift_date}T${shift.end_time}`,
-                    allDay: false
+                    title: shift.title || "Shift",
+                    start: `${shift.shift_date}`,
+                    end: `${shift.shift_date}`,
+                    start_time: shift.start_time,
+                    end_time: shift.end_time
+                    // allDay: false
                 }))
+
+                // console.log("Shifts", data);
+                // console.log("formatted shifts", formatShifts);
 
                 setShifts(formatShifts);
             } catch (err) {
@@ -55,6 +61,7 @@ const Calendar = () => {
     const openModal = (info) => {
         // console.log("Date clicked:", info.dateStr);
         setSelectedDate(info.dateStr);
+        // console.log(info.dateStr)
         setModalOpen(true);
     };
 
@@ -67,6 +74,12 @@ const Calendar = () => {
         return shifts.filter(shift => shift.start.startsWith(dateStr));
     };
 
+    const handleEventClick = (info) => {
+        const dateStr = info.event.startStr.slice(0, 10); // e.g. "2025-04-25"
+        setSelectedDate(dateStr);
+        setModalOpen(true);
+    };
+
     return (
         <div className="cal-content">
             <FullCalendar
@@ -74,6 +87,7 @@ const Calendar = () => {
                 themeSystem="bootstrap5"
                 initialView="dayGridMonth"
                 events={shifts}
+                eventClick={handleEventClick}
                 dateClick={openModal}
 
             // eventColor="#ccc"
@@ -84,32 +98,25 @@ const Calendar = () => {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">{selectedDate}</h5>
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    onClick={closeModal}
-                                ></button>
+                                <h5 className="modal-title">{format(parse(selectedDate, "yyyy-MM-dd", new Date()), "MMMM d, yyyy")}</h5>
+
                             </div>
                             <div className="modal-body">
                                 {getShiftsForDate(selectedDate).length > 0 ? (
-                                    <ul>
+                                    <div className='dshift'>
                                         {getShiftsForDate(selectedDate).map((shift, i) => (
-                                            <li key={i}>
-                                                {shift.title}/<br />
-                                                {shift.start}/<br />
-                                                {shift.end}
-                                            </li>
+                                            <div key={i}>
+                                                {format(parse(shift.start_time, "HH:mm", new Date()), "h:mm a")} - {format(parse(shift.end_time, "HH:mm", new Date()), "h:mm a")}
+                                            </div>
                                         ))}
-                                    </ul>
+                                    </div>
                                 ) : (
                                     <p>No shifts on this day.</p>
                                 )}
                             </div>
                             <div className="modal-footer">
                                 <button
-                                    type="button"
-                                    className="btn btn-primary"
+                                    className="btn-btn-primary"
                                     onClick={closeModal}
                                 >
                                     Close

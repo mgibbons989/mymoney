@@ -37,13 +37,13 @@ function Dashboard() {
             <Header />
             <div className="main-content">
 
-                <div className="dashcontent">
+                <div className="content">
 
                     <aside className="sidebar">
                         <Sidebar />
                     </aside>
 
-                    <div className="dashmain">
+                    <div className="main">
                         <div className="dashheader"><h2>Welcome to Your Dashboard, {name}!</h2></div>
 
                         <div className="dash-middle">

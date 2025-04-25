@@ -358,7 +358,7 @@ def getEmpShifts(employee_id):
     if time == 'week':
         start_week = today - timedelta(days=today.weekday())
         end_week = start_week + timedelta(days=6)
-        allShifts = allShifts.filter(Shifts.date > start_week, Shifts.date <= end_week)
+        allShifts = allShifts.filter(Shifts.date >= start_week, Shifts.date <= end_week)
     elif time == 'month':
         start_month = today.replace(day =1)
         if today.month == 12:
@@ -392,6 +392,49 @@ def getEmpShifts(employee_id):
         })
 
     return jsonify(shift_data), 200
+
+@app.route('/edit_shift/<int:shift_id>', methods = ['PUT'])
+@jwt_required()
+def editShift(shift_id):
+    shift = Shifts.query.filter_by(id=shift_id).first()
+    data = request.get_json()
+    
+    date_str = data.get('date')
+    start_time_str = data.get('start_time')
+    end_time_str = data.get('end_time')
+
+    if not date_str or not start_time_str or not end_time_str:
+        return jsonify({"message": "Missing required fields"}), 400
+    
+    try:
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        start = datetime.strptime(f"{date_str} {start_time_str}", '%Y-%m-%d %H:%M')
+        end = datetime.strptime(f"{date_str} {end_time_str}", '%Y-%m-%d %H:%M')
+
+        shift.date = date
+        shift.start_time = start
+        shift.end_time = end
+
+        db.session.commit()
+
+        return jsonify({
+            "id": shift.id,
+            "date": shift.date.isoformat(),
+            "start_time": shift.start_time.strftime('%H:%M'),
+            "end_time": shift.end_time.strftime('%H:%M'),
+            "employee_id": shift.employee_id
+        }), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+@app.route('/delete_shift/<int:shift_id>', methods = ["DELETE"])
+@jwt_required()
+def delShift(shift_id):
+    shift = Shifts.query.filter_by(id=shift_id).first()
+    db.session.delete(shift)
+    db.session.commit()
+    
+    return jsonify({"message": "Shift deleted successfully"}), 200
 
 @app.route('/api/employee', methods=['GET'])
 @jwt_required()
@@ -447,9 +490,7 @@ def clockin():
 def clockout():
     current_user_id = int(get_jwt_identity())
 
-    # NEED TO ADD EDGE CASE OF CLOCK OUT BEING THE NEXT DAY AND IF THERE ARE MULTIPLE CLOCK IN AND OUTS A DAY(split shift)
-
-    clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, date = db.func.date(db.func.now()), clock_out=None).first()
+    clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, clock_out=None).order_by(Timesheet.id.desc()).first()
     
     if clockin_record:
         clockin_record.clock_out = db.func.time(db.func.now())
@@ -479,7 +520,7 @@ def assign_shift():
         return jsonify({"message": "Missing required fields"}), 400
 
 
-    employee = Employee.query.filterby(id=employee_id).first()
+    employee = Employee.query.filter_by(id=employee_id).first()
     if not employee:
         return jsonify({"message": "Employee not found"}), 404
 
@@ -487,11 +528,14 @@ def assign_shift():
     db.session.add(new_shift)
     db.session.commit()
 
+    hours_worked = (end_time - start_time).seconds / 3600
+
     return jsonify({
         "id": new_shift.id,
         "date": date,
-        "start_time": start_time,
-        "end_time": end_time
+        "start_time": start_time.strftime('%H:%M'),
+        "end_time": end_time.strftime('%H:%M'),
+        "hours": round(hours_worked, 2)
     }), 201
 
 if __name__ == '__main__':

@@ -21,20 +21,28 @@ function Employees() {
             <div className="emps">
                 <h3>Employees</h3>
 
-                <div className="admin-emp-list">
-
-                    <ul className="man-employee">
-                        {employees.length === 0 ? (
-                            <li>No Employees</li>
-                        ) : (
-                            employees.map(emp => (
-                                <li key={emp.id} className="empName">
-                                    <span>Name: {emp.fname} {emp.lname}</span>  <span>Email: {emp.email}</span>  <span>Position: {emp.position}</span>
-                                </li>
-                            ))
-                        )}
-                    </ul>
-                </div>
+                {employees.length === 0 ? (
+                    <p>No Employees Available.</p>
+                ) : (
+                    <table className="admin-emp-list">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {employees.map(emp => (
+                                <tr key={emp.id} className="empName">
+                                    <td>{emp.fname} {emp.lname}</td>
+                                    <td>{emp.email}</td>
+                                    <td>{emp.position}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </>
     )

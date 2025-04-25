@@ -14,13 +14,13 @@ function Management() {
             <Header />
 
             <div className="main-content">
-                <div className="admincont">
+                <div className="content">
 
                     <aside className="sidebar">
                         <Sidebar />
                     </aside>
 
-                    <div className="adminmain">
+                    <div className="main">
                         <h2>System Management</h2>
 
                         <div className="admingr">
