@@ -41,11 +41,11 @@ function Sidebar() {
                 </Link>
 
                 {/* TO DOOOOO if the user has extra privileges then display this tab */}
-                {user.privs && (<Link to="/employees">
+                {user?.privs && (<Link to="/employees">
                     <button><span className="icon"><Users /></span> Employees</button>
                 </Link>)}
 
-                {user.privs && <Link to="/adminpage">
+                {user?.privs && <Link to="/management">
                     <button><span className="icon"><BookText /></span> System Management</button>
                 </Link>}
 
