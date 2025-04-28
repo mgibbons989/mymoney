@@ -167,10 +167,12 @@ def getPayroll():
 
     shiftsWorked = (
         Timesheet.query
-        .filter(Timesheet.employee_id == employee_id)
+        .filter(Timesheet.employee_id == employee_id, 
+                Timesheet.clock_out.isnot(None))
         .order_by(Timesheet.date.asc())
         .all()
     )
+    
 
     shiftWorked_data = []
 
@@ -178,7 +180,7 @@ def getPayroll():
 
         #clock_in = datetime.combine(shift.date, shift.clock_in)
         #clock_out = datetime.combine(shift.date, shift.clock_out)
-
+    
         duration = shift.clock_out - shift.clock_in
 
         hours_worked = duration.total_seconds() / 3600
@@ -419,11 +421,14 @@ def editShift(shift_id):
 
         db.session.commit()
 
+        hours_worked = (end - start).seconds / 3600
+
         return jsonify({
             "id": shift.id,
             "date": shift.date.isoformat(),
             "start_time": shift.start_time.strftime('%H:%M'),
             "end_time": shift.end_time.strftime('%H:%M'),
+            "hours": hours_worked,
             "employee_id": shift.employee_id
         }), 200
     except Exception as e:
@@ -478,9 +483,13 @@ def clock_status():
 @jwt_required()
 def clockin():
     current_user_id = int(get_jwt_identity())
+
+    now = datetime.now()
+
     clockin_record = Timesheet(employee_id = current_user_id, 
-                               date = db.func.date(db.func.now()), 
-                               clock_in = db.func.time(db.func.now()))
+                               date = now, 
+                               clock_in = now,
+                               clock_out=None)
 
     db.session.add(clockin_record)
     db.session.commit()
@@ -491,11 +500,15 @@ def clockin():
 @jwt_required()
 def clockout():
     current_user_id = int(get_jwt_identity())
+    now = datetime.now()
+
 
     clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, clock_out=None).order_by(Timesheet.id.desc()).first()
     
     if clockin_record:
-        clockin_record.clock_out = db.func.time(db.func.now())
+        clockin_record.clock_out = now
+        delta = now - clockin_record.clock_in
+        clockin_record.hours_Worked = delta.total_seconds() / 3600.0
         db.session.commit()
         return jsonify({'message': 'Clock-out successful'}), 200
     

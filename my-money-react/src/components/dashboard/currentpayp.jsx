@@ -16,10 +16,17 @@ function CurrentPayPeriod() {
             headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
+        const today = new Date();
 
-        const past = data.filter(shift => new Date(shift.shift_date) < new Date())
-            .sort((a, b) => new Date(b.shift_date) - new Date(a.shift_date)).slice(0, 3);
+        const past = data.filter(shift => {
+            const shiftDate = new Date(shift.shift_date);
+            shiftDate.setHours(0, 0, 0, 0);
+            return shiftDate <= today;
+        }).sort((a, b) => new Date(b.shift_date) - new Date(a.shift_date))
+            .slice(0, 3);
 
+        console.log("Data received:", data);
+        console.log("Past shifts:", past);
         setShifts(past);
 
         const total = past.reduce((sum, shift) => sum + shift.total_earned, 0);
