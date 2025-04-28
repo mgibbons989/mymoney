@@ -87,7 +87,7 @@ function EmployeeModal({ employee, onClose }) {
             body: JSON.stringify({
                 date: editingShift.date,
                 start_time: editingShift.start_time,
-                end_time: editingShift.end_time
+                end_time: editingShift.end_time,
             }),
         });
 

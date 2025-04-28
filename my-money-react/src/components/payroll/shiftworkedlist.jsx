@@ -23,13 +23,21 @@ function ShiftWorkedList({ startDate, endDate }) {
 
             const filteredShifts = data.filter(shift => {
                 const shiftDate = new Date(shift.shift_date);
-                return (
-                    (!startDate || shiftDate >= new Date(startDate)) &&
-                    (!endDate || shiftDate <= new Date(endDate))
-                );
+                shiftDate.setHours(0, 0, 0, 0);
+
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+
+                const end = new Date(endDate);
+                end.setHours(0, 0, 0, 0)
+
+                return shiftDate >= start && shiftDate <= end;
             });
 
             setShiftWorkedList(filteredShifts);
+
+            console.log('data', data);
+            console.log('shifts', filteredShifts);
 
             const total = filteredShifts.reduce((sum, shift) => sum + shift.total_earned, 0);
             setTotalWages(total.toFixed(2));
@@ -50,17 +58,22 @@ function ShiftWorkedList({ startDate, endDate }) {
                         shiftWorkedList.length === 0 ? (
                             <li className="shift">No Shifts Available</li>
                         ) : (
-                            shiftWorkedList.map(shift => (
-                                <li key={shift.id} className="shift">
-                                    <span>(
-                                        <strong>{format(new Date(shift.shift_date), "MM/dd/yy")}){" "}</strong>
-                                        {format(parse(shift.start_time, "HH:mm", new Date()), "h:mm a")}{" "}-{" "}
-                                        {format(parse(shift.end_time, "HH:mm", new Date()), "h:mm a")}
-                                    </span>
-                                    <span>{shift.hours.toFixed(2)} hrs</span>
-                                    <span>${shift.total_earned}</span>
-                                </li>
-                            ))
+                            shiftWorkedList.map(shift => {
+                                const shiftDate = new Date(shift.shift_date + "Z");
+                                const startDateTime = new Date(`${shift.shift_date.split('T')[0]}T${shift.start_time}:00Z`);
+                                const endDateTime = new Date(`${shift.shift_date.split('T')[0]}T${shift.end_time}:00Z`);
+
+                                return (
+                                    <li key={shift.id} className="shift">
+                                        <span>
+                                            (<strong>{format(shiftDate, "MM/dd/yy")}</strong>){" "}
+                                            {format(startDateTime, "h:mm a")} - {format(endDateTime, "h:mm a")}
+                                        </span>
+                                        <span>{shift.hours.toFixed(2)} hrs</span>
+                                        <span>${shift.total_earned}</span>
+                                    </li>
+                                )
+                            })
                         )}
                 </ul>
 
