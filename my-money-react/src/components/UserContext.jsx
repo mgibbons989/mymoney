@@ -3,6 +3,8 @@ import { createContext, useState, useEffect } from "react";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -11,7 +13,7 @@ export const UserProvider = ({ children }) => {
             if (!token) return;
 
             try {
-                const res = await fetch("http://localhost:5000/api/employee", {
+                const res = await fetch(`${url}/api/employee`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!res.ok) throw new Error("Unauthorized");

@@ -13,6 +13,8 @@ import '@fullcalendar/bootstrap5'; // applies Bootstrap theme
 import './sched.css'
 
 const Calendar = () => {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
 
@@ -22,7 +24,7 @@ const Calendar = () => {
         const getShifts = async () => {
             try {
                 const token = localStorage.getItem("access_token");
-                const res = await fetch("http://localhost:5000/getShifts", {
+                const res = await fetch(`${url}/getShifts`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

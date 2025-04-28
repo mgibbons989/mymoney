@@ -8,22 +8,22 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 from datetime import timedelta
 import os
-import urllib.parse
+# import urllib.parse
 import re
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", 
+CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173","http://127.0.0.1:4173",
                                               "https://mgibbons989.github.io", "http://localhost:3000", 
-                                              "http://127.0.0.1:3000", "http://127.0.0.1:5000", "http://localhost:5000"])
-load_dotenv()
+                                              "http://127.0.0.1:3000", "http://127.0.0.1:5000", "http://localhost:5000", "https://mymoney-production-c8a6.up.railway.app"])
+# load_dotenv()
 
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-encoded_password = urllib.parse.quote_plus(DB_PASSWORD) #in case there's a special character in the password
-DB_HOST = os.getenv('DB_HOST')
-DB_NAME = os.getenv('DB_NAME')
+# DB_USER = os.getenv('DB_USER')
+# DB_PASSWORD = os.getenv('DB_PASSWORD')
+# encoded_password = urllib.parse.quote_plus(DB_PASSWORD) #in case there's a special character in the password
+# DB_HOST = os.getenv('DB_HOST')
+# DB_NAME = os.getenv('DB_NAME')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{encoded_password}@{DB_HOST}/{DB_NAME}'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'tempsecretkey')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
@@ -327,10 +327,10 @@ def getEmployees():
     return jsonify(emp_data), 200
 
 # fetch only the employees and no managers
-@app.route('/employeesOnly')
+@app.route('/employeesOnly', methods = ['GET'])
 @jwt_required()
 def getEmployeesOnly():
-    curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs==0).all()  # 0 for employees, 1 for managers
+    curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs== False).all()  # 0 for employees, 1 for managers
     emp_data = []
 
     for emp in curr_emps:
@@ -541,4 +541,4 @@ def assign_shift():
     }), 201
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port = int(os.environ.get("PORT", 5000)))

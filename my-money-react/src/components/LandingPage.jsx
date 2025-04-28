@@ -10,6 +10,8 @@ import Footer from "./footer";
 
 
 function LandingPage() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -18,7 +20,7 @@ function LandingPage() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const result = await fetch("http://localhost:5000/login", {
+        const result = await fetch(`${url}/login`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -28,7 +30,7 @@ function LandingPage() {
         if (result.ok) {
             localStorage.setItem("access_token", data.access_token);
 
-            const userRes = await fetch("http://localhost:5000/api/employee", {
+            const userRes = await fetch(`${url}/api/employee`, {
                 headers: { Authorization: `Bearer ${data.access_token}` },
             });
 

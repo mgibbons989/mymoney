@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import "../register.css";
 
 function Signup() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [cpassword, setCpassword] = useState("")
@@ -19,7 +21,7 @@ function Signup() {
 
     useEffect(() => {
         const getPositions = async () => {
-            const resPositions = await fetch("http://localhost:5000/positions/public");
+            const resPositions = await fetch(`${url}/positions/public`);
             setPositions(await resPositions.json());
         };
 
@@ -34,7 +36,7 @@ function Signup() {
             return;
         }
 
-        const res = await fetch("http://localhost:5000/signup", {
+        const res = await fetch(`${url}/signup`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, fname, lname, position }),

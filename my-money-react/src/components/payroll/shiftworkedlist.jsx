@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { format, parse } from "date-fns";
 
 function ShiftWorkedList({ startDate, endDate }) {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [shiftWorkedList, setShiftWorkedList] = useState([]);
     const [totalWages, setTotalWages] = useState(0);
 
@@ -14,7 +16,7 @@ function ShiftWorkedList({ startDate, endDate }) {
         const token = localStorage.getItem("access_token");
 
         const fetchData = async () => {
-            const resShiftWorkedList = await fetch("http://localhost:5000/getPayrolls", {
+            const resShiftWorkedList = await fetch(`${url}/getPayrolls`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await resShiftWorkedList.json();

@@ -6,6 +6,7 @@ import { format, parse } from 'date-fns';
 
 
 function EmployeeModal({ employee, onClose }) {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
     const navigate = useNavigate();
 
     const [shifts, setShifts] = useState([]);
@@ -15,7 +16,7 @@ function EmployeeModal({ employee, onClose }) {
     useEffect(() => {
         const fetchShifts = async () => {
             const token = localStorage.getItem("access_token");
-            const res = await fetch(`http://localhost:5000/getEmployeeShifts/${employee.id}?period=${filter}`, {
+            const res = await fetch(`${url}/getEmployeeShifts/${employee.id}?period=${filter}`, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -39,7 +40,7 @@ function EmployeeModal({ employee, onClose }) {
 
     const handleAddShift = async (newShift) => {
         const token = localStorage.getItem("access_token")
-        const res = await fetch("http://localhost:5000/assign_shift", {
+        const res = await fetch(`${url}/assign_shift`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -77,7 +78,7 @@ function EmployeeModal({ employee, onClose }) {
     const handleUpdateShift = async () => {
         if (!editingShift) return;
         const token = localStorage.getItem("access_token");
-        const res = await fetch(`http://localhost:5000/edit_shift/${editingShift.id}`, {
+        const res = await fetch(`${url}/edit_shift/${editingShift.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -107,7 +108,7 @@ function EmployeeModal({ employee, onClose }) {
 
     const handleDeleteShift = async (shiftId) => {
         const token = localStorage.getItem("access_token");
-        const res = await fetch(`http://localhost:5000/delete_shift/${shiftId}`, {
+        const res = await fetch(`${url}/delete_shift/${shiftId}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
         });

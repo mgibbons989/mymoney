@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import EmployeeModal from './empInfoModal';
 
 function EmployeeList() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [employeeList, setEmployeeList] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
 
@@ -11,10 +13,18 @@ function EmployeeList() {
         const token = localStorage.getItem("access_token");
 
         const fetchData = async () => {
-            const resEmployees = await fetch("http://localhost:5000/employeesOnly", {
-                headers: { Authorization: `Bearer ${token}` },
+            const resEmployees = await fetch(`${url}/employeesOnly`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
             });
-            setEmployeeList(await resEmployees.json());
+            if (resEmployees.ok) {
+                setEmployeeList(await resEmployees.json());
+            } else {
+                console.error('Failed to fetch employees:', resEmployees.status);
+            }
         };
 
         fetchData();

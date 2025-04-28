@@ -16,20 +16,6 @@ function Sidebar() {
         setUser(null)
         navigate('/')
     }
-    // const [user, setUser] = useState({ privs: false })
-
-    // useEffect(() => {
-    //     const checkPrivileges = async () => {
-    //         const token = localStorage.getItem("access_token");
-    //         const resUser = await fetch("http://localhost:5000/api/employee", {
-    //             headers: { Authorization: `Bearer ${token}` },
-    //         });
-    //         const userData = await resUser.json();
-    //         setUser(userData)
-    //     }
-
-    //     checkPrivileges();
-    // }, [])
     const { user } = useContext(UserContext);
     console.log("User privileges:", user);
 
@@ -55,11 +41,11 @@ function Sidebar() {
                 </Link>
 
                 {/* TO DOOOOO if the user has extra privileges then display this tab */}
-                {user.privs && (<Link to="/employees">
+                {user?.privs && (<Link to="/employees">
                     <button><span className="icon"><Users /></span> Employees</button>
                 </Link>)}
 
-                {user.privs && <Link to="/adminpage">
+                {user?.privs && <Link to="/management">
                     <button><span className="icon"><BookText /></span> System Management</button>
                 </Link>}
 

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import AddPosition from "./addPosModal";
 
 function Positions() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [modalOpen, setModalOpen] = useState(false);
     const [positions, setPositions] = useState([]);
 
@@ -9,7 +11,7 @@ function Positions() {
         const token = localStorage.getItem("access_token");
 
         const fetchData = async () => {
-            const resPositions = await fetch("http://localhost:5000/positions", {
+            const resPositions = await fetch(`${url}/positions`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -21,7 +23,7 @@ function Positions() {
 
     const handleAddPosition = async (formData) => {
         const token = localStorage.getItem("access_token");
-        const res = await fetch("http://localhost:5000/addPosition", {
+        const res = await fetch(`${url}/addPosition`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
