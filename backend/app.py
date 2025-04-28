@@ -167,10 +167,12 @@ def getPayroll():
 
     shiftsWorked = (
         Timesheet.query
-        .filter(Timesheet.employee_id == employee_id)
+        .filter(Timesheet.employee_id == employee_id, 
+                Timesheet.clock_out.isnot(None))
         .order_by(Timesheet.date.asc())
         .all()
     )
+    
 
     shiftWorked_data = []
 
@@ -178,7 +180,7 @@ def getPayroll():
 
         #clock_in = datetime.combine(shift.date, shift.clock_in)
         #clock_out = datetime.combine(shift.date, shift.clock_out)
-
+    
         duration = shift.clock_out - shift.clock_in
 
         hours_worked = duration.total_seconds() / 3600
