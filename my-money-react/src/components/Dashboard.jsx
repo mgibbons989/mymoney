@@ -10,12 +10,14 @@ import Sidebar from "./Sidebar";
 import "./dashboard/dash.css"
 
 function Dashboard() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [name, setName] = useState("user");
 
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 
-        fetch('http://localhost:5000/api/employee', {
+        fetch(`${url}/api/employee`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import { format, parse } from 'date-fns';
 
 
 function UpcomingShifts() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
 
     const [shifts, setShifts] = useState([]);
     const [totalWages, setTotalWages] = useState(0);
@@ -10,7 +11,7 @@ function UpcomingShifts() {
     useEffect(() => {
         const getShifts = async () => {
             const token = localStorage.getItem("access_token");
-            const res = await fetch("http://localhost:5000/getShifts", {
+            const res = await fetch(`${url}/getShifts`, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });

@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 
 
 function Employees() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
+
     const [employees, setEmployees] = useState([]);
     useEffect(() => {
         const token = localStorage.getItem("access_token");
 
         const fetchData = async () => {
-            const resEmployees = await fetch("http://localhost:5000/employees", {
+            const resEmployees = await fetch(`${url}/employees`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setEmployees(await resEmployees.json());

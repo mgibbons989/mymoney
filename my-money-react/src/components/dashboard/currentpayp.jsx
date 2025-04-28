@@ -3,6 +3,7 @@ import { format, parse } from 'date-fns';
 
 
 function CurrentPayPeriod() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
 
     const [shifts, setShifts] = useState([]);
     const [totalWages, setTotalWages] = useState(0);
@@ -11,7 +12,7 @@ function CurrentPayPeriod() {
         // console.log("getting shifts");
 
         const token = localStorage.getItem("access_token");
-        const res = await fetch("http://localhost:5000/getPayrolls", {
+        const res = await fetch(`${url}/getPayrolls`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

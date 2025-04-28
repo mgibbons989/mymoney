@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from flask_migrate import Migrate
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from datetime import timedelta
 import os
 # import urllib.parse
@@ -14,7 +14,7 @@ import re
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", 
                                               "https://mgibbons989.github.io", "http://localhost:3000", 
-                                              "http://127.0.0.1:3000", "http://127.0.0.1:5000", "http://localhost:5000"])
+                                              "http://127.0.0.1:3000", "http://127.0.0.1:5000", "http://localhost:5000", "https://mymoney-production-c8a6.up.railway.app"])
 # load_dotenv()
 
 # DB_USER = os.getenv('DB_USER')

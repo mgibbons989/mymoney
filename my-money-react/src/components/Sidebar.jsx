@@ -16,20 +16,6 @@ function Sidebar() {
         setUser(null)
         navigate('/')
     }
-    // const [user, setUser] = useState({ privs: false })
-
-    // useEffect(() => {
-    //     const checkPrivileges = async () => {
-    //         const token = localStorage.getItem("access_token");
-    //         const resUser = await fetch("http://localhost:5000/api/employee", {
-    //             headers: { Authorization: `Bearer ${token}` },
-    //         });
-    //         const userData = await resUser.json();
-    //         setUser(userData)
-    //     }
-
-    //     checkPrivileges();
-    // }, [])
     const { user } = useContext(UserContext);
     console.log("User privileges:", user);
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format } from "date-fns"
 
 function TimeClock() {
+    const url = 'https://mymoney-production-c8a6.up.railway.app'
 
     const [currentTime, setCurrentTime] = useState(new Date())
     useEffect(() => {
@@ -16,7 +17,8 @@ function TimeClock() {
             try {
                 const token = localStorage.getItem('access_token');
 
-                const res = await fetch('http://localhost:5000/clock-in-status', {
+
+                const res = await fetch(`${url}/clock-in-status`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -50,7 +52,7 @@ function TimeClock() {
         // }
 
         if (clockedIn) {
-            await fetch('http://localhost:5000/clockout', {
+            await fetch(`${url}/clockout`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -60,7 +62,7 @@ function TimeClock() {
             setClockedIn(false)
         }
         else {
-            await fetch('http://localhost:5000/clockin', {
+            await fetch(`${url}/clockin`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
