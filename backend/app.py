@@ -478,9 +478,13 @@ def clock_status():
 @jwt_required()
 def clockin():
     current_user_id = int(get_jwt_identity())
+
+    now = datetime.now()
+
     clockin_record = Timesheet(employee_id = current_user_id, 
-                               date = db.func.date(db.func.now()), 
-                               clock_in = db.func.time(db.func.now()))
+                               date = now, 
+                               clock_in = now,
+                               clock_out=None)
 
     db.session.add(clockin_record)
     db.session.commit()
@@ -491,11 +495,15 @@ def clockin():
 @jwt_required()
 def clockout():
     current_user_id = int(get_jwt_identity())
+    now = datetime.now()
+
 
     clockin_record = Timesheet.query.filter_by(employee_id=current_user_id, clock_out=None).order_by(Timesheet.id.desc()).first()
     
     if clockin_record:
-        clockin_record.clock_out = db.func.time(db.func.now())
+        clockin_record.clock_out = now
+        delta = now - clockin_record.clock_in
+        clockin_record.hours_Worked = delta.total_seconds() / 3600.0
         db.session.commit()
         return jsonify({'message': 'Clock-out successful'}), 200
     
