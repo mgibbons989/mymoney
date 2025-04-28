@@ -330,7 +330,7 @@ def getEmployees():
 @app.route('/employeesOnly')
 @jwt_required()
 def getEmployeesOnly():
-    curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs==0).all()  # 0 for employees, 1 for managers
+    curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs== False).all()  # 0 for employees, 1 for managers
     emp_data = []
 
     for emp in curr_emps:

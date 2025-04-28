@@ -16,7 +16,11 @@ function EmployeeList() {
             const resEmployees = await fetch(`${url}/employeesOnly`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setEmployeeList(await resEmployees.json());
+            if (resEmployees.ok) {
+                setEmployeeList(await resEmployees.json());
+            } else {
+                console.error('Failed to fetch employees:', resEmployees.status);
+            }
         };
 
         fetchData();
