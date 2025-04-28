@@ -428,7 +428,7 @@ def editShift(shift_id):
             "date": shift.date.isoformat(),
             "start_time": shift.start_time.strftime('%H:%M'),
             "end_time": shift.end_time.strftime('%H:%M'),
-            "hours": shift.hours,
+            "hours": hours_worked,
             "employee_id": shift.employee_id
         }), 200
     except Exception as e:
