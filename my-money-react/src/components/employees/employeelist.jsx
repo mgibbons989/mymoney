@@ -14,7 +14,11 @@ function EmployeeList() {
 
         const fetchData = async () => {
             const resEmployees = await fetch(`${url}/employeesOnly`, {
-                headers: { Authorization: `Bearer ${token}` },
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
             });
             if (resEmployees.ok) {
                 setEmployeeList(await resEmployees.json());

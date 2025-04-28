@@ -327,7 +327,7 @@ def getEmployees():
     return jsonify(emp_data), 200
 
 # fetch only the employees and no managers
-@app.route('/employeesOnly')
+@app.route('/employeesOnly', methods = ['GET'])
 @jwt_required()
 def getEmployeesOnly():
     curr_emps = db.session.query(Employee).join(Positions).filter(Positions.privs== False).all()  # 0 for employees, 1 for managers
