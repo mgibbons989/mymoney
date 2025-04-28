@@ -12,7 +12,7 @@ import os
 import re
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", 
+CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173","http://127.0.0.1:4173",
                                               "https://mgibbons989.github.io", "http://localhost:3000", 
                                               "http://127.0.0.1:3000", "http://127.0.0.1:5000", "http://localhost:5000", "https://mymoney-production-c8a6.up.railway.app"])
 # load_dotenv()

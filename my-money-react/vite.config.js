@@ -5,7 +5,4 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: "/mymoney/",
   plugins: [react()],
-  server: {
-    historyApiFallback: true,
-  },
 })
